@@ -212,9 +212,10 @@ layerTree.prototype.addVectorLayer = function (form) {
     var sourceFormat;
     var source = new ol.source.Vector();
 
-    var max_x, max_y, min_x, min_y, nw, sw, no, so;
+    var max_x, max_y, min_x, min_y, nw, sw, no, so
     var geojson_text; 
     var extent;
+    var zoompoint
 
 
     fr.onload = function (evt) {
@@ -238,7 +239,8 @@ layerTree.prototype.addVectorLayer = function (form) {
             geojson_json.crs = { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::3857" } };
         }
 
-
+        zoompoint = geojson_json.features[0].geometry.coordinates;
+        console.log(zoompoint)
 
 
 // Räumlicher Vergleich und Duplikat_Veränderung
@@ -463,18 +465,34 @@ geojson_json.features.unshift(
     this.addBufferIcon(layer);
     this.map.addLayer(layer);
     this.messages.textContent = 'Vector layer added successfully.';
-    //console.log(this.map.getLayers())
-    //geht, braucht aber die richtigen Koords und das richtige Format!!!!!!!!!!!!!!!!!!!!!!!!
-    //this.map.getView().setCenter([10000, 49000]) 
-    // geht aber nur wenn auf einen Punkt gezoomt wird
-    //this.map.getView().fit([1023140.5972,6257889.8727,1023140.5972,6257889.8727], this.map.getSize()); 
     
-    
+    console.log(this.map.getSize())
+    console.log(this.map.getView())
 
-    
+    //console.log(zoompoint)    //undefined! ... sollte eigentlich den Wert für center: ergeben
+
+    // Zoom zum ersten Feature, da zum Extent nicht geht.... immernoch kommt weder extent noch zoompoint an
+    /*this.map.setView( new ol.View({
+        projection: 'EPSG:3857', 
+        center: [1074072.75446, 6274807.424978], //zoompoint
+        zoom: 10
+        })
+    )*/
+    // geht nicht wirklich
+    /*
+    this.map.getView().fit([1074072.75446, 6274807.424978, 1594272.75446, 6895207.424978], {
+          //  size: this.map.getSize(), 
+          //  minResolution: 1000      
+        })
+        */
+    //geht nicht wirklich
+    //this.map.getView().setCenter([10000, 49000])    
 
     return this;
 }; // ------- Ende Fu layerTree.prototype.addVectorLayer
+
+
+
 
 // Fu. muss auch innerhalb vom fr.onload stehen und  geojson_text oben definiert sein
 function download(filename, txt) {
@@ -535,9 +553,14 @@ function init() {
         ],
         view: new ol.View({
             center: [1174072.754460, 6574807.424978],
+            //resolution: 6000,
             zoom: 6
         })
     });
+
+
+    console.log(map.getLayers().array_);
+
     var tree = new layerTree({map: map, target: 'layertree', messages: 'messageBar'})
         .createRegistry(map.getLayers().item(0))
         .createRegistry(map.getLayers().item(1));
