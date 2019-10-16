@@ -262,7 +262,7 @@ layerTree.prototype.addVectorLayer = function (form) {
         
         
         extent = [min_x, min_y, max_x, max_y]
-        //console.log("Extent:"+extent)
+        console.log("Extent:"+extent)
         
         
 
@@ -448,7 +448,7 @@ geojson_json.features.unshift(
     var new_filename = file_start + '_fürMapit.geojson';
     //console.log(new_filename)
 
-   //download(new_filename, geojson_export);
+   download(new_filename, geojson_export);
     };//-------------------------------------------------------- Ende fr.onload
 
     //console.log("Extent: "+extent)
@@ -463,9 +463,11 @@ geojson_json.features.unshift(
     this.addBufferIcon(layer);
     this.map.addLayer(layer);
     this.messages.textContent = 'Vector layer added successfully.';
-    console.log(this.map.getLayers())
-    this.map.getView().setCenter([0,1,1,2]) //geht, braucht aber die richtigen Koords!!!!!!!!!!!!!!!!!!!!!!!!
-    //this.map.getView().fitExtent(extent, map.getSize());
+    //console.log(this.map.getLayers())
+    //geht, braucht aber die richtigen Koords und das richtige Format!!!!!!!!!!!!!!!!!!!!!!!!
+    //this.map.getView().setCenter([10000, 49000]) 
+    // geht aber nur wenn auf einen Punkt gezoomt wird
+    //this.map.getView().fit([1023140.5972,6257889.8727,1023140.5972,6257889.8727], this.map.getSize()); 
     
     
 
@@ -476,7 +478,7 @@ geojson_json.features.unshift(
 
 // Fu. muss auch innerhalb vom fr.onload stehen und  geojson_text oben definiert sein
 function download(filename, txt) {
-    console.log("3-Innerhalb download-fu: text-variable(ausgeojson_export übernommen) is now:" +txt);                
+    //console.log("3-Innerhalb download-fu: text-variable(ausgeojson_export übernommen) is now:" +txt);                
     var element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(txt));
     element.setAttribute('download', filename);
