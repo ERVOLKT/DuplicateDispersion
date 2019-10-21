@@ -45,6 +45,7 @@ var layerTree = function (options) {
     } else {
         throw new Error('Invalid parameter(s) provided.');
     }
+
 };
 
 layerTree.prototype.createButton = function (elemName, elemTitle, elemType) {
@@ -472,7 +473,7 @@ geojson_json.features.unshift(
     //console.log("Layer-Objekt: "+layer);
     this.addBufferIcon(layer);
     this.map.addLayer(layer);
-    console.log("Dateiname:"+name)
+    
     this.messages.textContent = 'Geojson-Datei wurde hinzugefügt.';
     
     
@@ -585,6 +586,12 @@ function init() {
         tree.addVectorLayer(this);
         this.parentNode.style.display = 'none';
     });
+
+    document.getElementById('fixed-div').addEventListener('click', function (evt) {
+    //console.log("Juhu")
+    document.getElementsByClassName('addvector')[0].click()
+    });
+
 
     //Automatischer Click auf AddVectorLayer-Button
     document.getElementsByClassName('addvector')[0].click()
