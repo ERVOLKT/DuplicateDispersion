@@ -81,17 +81,17 @@
 <!------------------- GEojson functionality----------------------------------------------------------->
         <div id="addvector" class="toggleable" style="display: none;">
             <form id="addvector_form" class="addlayer">
-                <p>Add Vector layer</p>
+                <p>GeoJSON- Datei auswählen: </p>
                 <table>
                     <tr>
-                        <td>Vector file:</td>
+                        <td>Geojson-Datei:</td>
                         <td><input name="file" type="file" required="required"></td>
                     </tr>
                     <tr>
-                        <td>Display name:</td>
+                        <td>Anzeigename:</td>
                         <td><input name="displayname" type="text"></td>
                     </tr>
-                    <tr>
+                    <!--<tr>
                         <td>Format:</td>
                         <td><select name="format" required="required">
                             <option value="geojson">GeoJSON</option>
@@ -99,11 +99,11 @@
                             <option value="kml">KML</option>
                             <option value="osm">OSM</option>
                         </select></td>
-                    </tr>
-                    <tr>
+                    </tr>-->
+                    <!--<tr>
                         <td>Projection:</td>
                         <td><input name="projection" type="text"></td>
-                    </tr>
+                    </tr>-->
                     <tr>
                         <td><input type="submit" value="Add layer"></td>
                         <td><input type="button" value="Cancel" onclick="this.form.parentNode.style.display = 'none'"></td>
