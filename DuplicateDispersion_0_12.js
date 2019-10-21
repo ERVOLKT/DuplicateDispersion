@@ -27,7 +27,7 @@ var layerTree = function (options) {
             idCounter += 1;
             var layerDiv = document.createElement('div');
             layerDiv.className = buffer ? 'layer ol-unselectable buffering' : 'layer ol-unselectable';
-            layerDiv.title = layer.get('name') || 'Unnamed Layer';
+            layerDiv.title = layer.get('name') || 'Layer ohne Namen';
             layerDiv.id = layer.get('id');
             var layerSpan = document.createElement('span');
             layerSpan.textContent = layerDiv.title;
@@ -421,7 +421,9 @@ geojson_json.features.unshift(
         geojson_text = JSON.stringify(geojson_json);
         //console.log("geojson_text is now "+ geojson_text);
 
-        switch (form.format.value) {
+        //explicitly determine geojson format
+        var sourceFormat = new ol.format.GeoJSON();
+        /*switch (form.format.value) {
             case 'geojson':
                 sourceFormat = new ol.format.GeoJSON();
                 break;
@@ -436,10 +438,12 @@ geojson_json.features.unshift(
                 break;
             default:
                 return false;
-        }
-        //explicitly determine only web mercator
+        }*/
+        //explicitly determine only web mercator 
         var dataProjection = 'EPSG:3857'    //form.projection.value' || sourceFormat.readProjection(vectorData) || currentProj;
+        
         source.addFeatures(sourceFormat.readFeatures(geojson_text, {
+        //source.addFeatures(sourceFormat.readFeatures(geojson_text, {
             dataProjection: dataProjection,
             featureProjection: currentProj
         }));
@@ -468,7 +472,8 @@ geojson_json.features.unshift(
     //console.log("Layer-Objekt: "+layer);
     this.addBufferIcon(layer);
     this.map.addLayer(layer);
-    this.messages.textContent = 'Vector layer added successfully.';
+    console.log("Dateiname:"+name)
+    this.messages.textContent = 'Geojson-Datei wurde hinzugefügt.';
     
     
     //Zoom auf Layer, später mit extent -- wenn von hier aus erreichbar:
@@ -583,5 +588,6 @@ function init() {
 
     //Automatischer Click auf AddVectorLayer-Button
     document.getElementsByClassName('addvector')[0].click()
+
 }
 document.addEventListener('DOMContentLoaded', init);
