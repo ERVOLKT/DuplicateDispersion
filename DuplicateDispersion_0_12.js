@@ -518,8 +518,9 @@ function init() {
         layers: [
             new ol.layer.Tile({
                 source: new ol.source.OSM(),
-                name: 'OpenStreetMap'
-            }),
+                name: 'BaseLayer: OpenStreetMap'
+            })
+            /*,
             new ol.layer.Vector({
                 source: new ol.source.Vector({
                     format: new ol.format.GeoJSON({
@@ -533,7 +534,7 @@ function init() {
                     ]
                 }),
                 name: 'World Capitals'
-            })
+            })*/
         ],
         controls: [
             //Define the default controls
@@ -562,7 +563,7 @@ function init() {
 
     var tree = new layerTree({map: map, target: 'layertree', messages: 'messageBar'})
         .createRegistry(map.getLayers().item(0))
-        .createRegistry(map.getLayers().item(1));
+        //.createRegistry(map.getLayers().item(1));
 
     document.getElementById('checkwmslayer').addEventListener('click', function () {
         tree.checkWmsLayer(this.form);
