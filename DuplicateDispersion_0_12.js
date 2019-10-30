@@ -54,7 +54,6 @@ layerTree.prototype.createButton = function (elemName, elemTitle, elemType) {
     switch (elemType) {
         case 'addlayer':
             buttonElem.addEventListener('click', function () {
-                console.log("clicked!!!")
                 document.getElementById(elemName).style.display = 'block';
             });
             return buttonElem;
@@ -213,7 +212,7 @@ layerTree.prototype.addVectorLayer = function (form) {
     var sourceFormat;
     var source = new ol.source.Vector();
 
-    var max_x, max_y, min_x, min_yo, nw, sw, no, so
+    var max_x, max_y, min_x, min_y, nw, sw, no, so
     var geojson_text; 
     var extent;
     var zoompoint
@@ -451,7 +450,7 @@ geojson_json.features.unshift(
     var new_filename = file_start + '_fürMapit.geojson';
     //console.log(new_filename)
 
-   //save_as(geojson_export, new_filename)
+   download(new_filename, geojson_export);
     };//-------------------------------------------------------- Ende fr.onload
 
     //console.log("Extent: "+extent)
@@ -460,7 +459,6 @@ geojson_json.features.unshift(
         source: source,
         name: form.displayname.value,
         strategy: ol.loadingstrategy.bbox
-        //,extent: extent
     });
 
     //console.log("Layer-Objekt: "+layer);
@@ -468,8 +466,8 @@ geojson_json.features.unshift(
     this.map.addLayer(layer);
     this.messages.textContent = 'Vector layer added successfully.';
     
-    console.log("mapsize: "+this.map.getSize())
-    console.log("getview: "+this.map.getView())
+    console.log(this.map.getSize())
+    console.log(this.map.getView())
 
     //console.log(zoompoint)    //undefined! ... sollte eigentlich den Wert für center: ergeben
 
@@ -489,24 +487,29 @@ geojson_json.features.unshift(
         */
     //geht nicht wirklich
     //this.map.getView().setCenter([10000, 49000])    
-    console.log("tHIS: "+this)
+
     return this;
 }; // ------- Ende Fu layerTree.prototype.addVectorLayer
 
-// Fu. muss auch innerhalb vom fr.onload stehen und  geojson_text oben definiert sein
-function save_as (content,fname){
-   //var content = "What's up , hello world";
-    // any kind of extension (.txt,.cpp,.cs,.bat)
-    //var filename = "hello.geojson";
-    var blob = new Blob([content], {
-        type: "text/plain;charset=utf-8"
-    });
 
-    saveAs(blob, fname); 
+
+
+// Fu. muss auch innerhalb vom fr.onload stehen und  geojson_text oben definiert sein
+function download(filename, txt) {
+    //console.log("3-Innerhalb download-fu: text-variable(ausgeojson_export übernommen) is now:" +txt);                
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(txt));
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
 }
 
-    //document.getElementsByClassName('addvector').submit()
-    //document.getElementById('addvector').click()
+
 
 function init() {
 
@@ -580,11 +583,9 @@ function init() {
         this.parentNode.style.display = 'none';
     });
     document.getElementById('addvector_form').addEventListener('submit', function (evt) {
-        console.log("addcevtorsubmit")
         evt.preventDefault();
         tree.addVectorLayer(this);
         this.parentNode.style.display = 'none';
     });
-    
 }
 document.addEventListener('DOMContentLoaded', init);
