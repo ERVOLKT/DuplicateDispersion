@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Geojson Batch2</title>
+        <link href="ol.css" rel="stylesheet">
+        <link href="ControlCsv_v01.css" rel="stylesheet">
+        <script type="text/javascript" src="ol-debug.js"></script>
+        <script type="text/javascript" src="FileSaver.js"></script>
+        <script type="text/javascript" src="papaparse.min.js"></script>
+        <script type="text/javascript" src="ControlCsv_v01.js"></script>
+    </head>
+    <body>
+
+    	<div id="interact_div">
+			<label >CSV-Datei eingeben:</label>
+			<input type="file" id="file_input" name="file_input" accept=".csv">
+            <div id="info_div"> </div>
+		</div>
+        <div id="map" class="map"></div>
+	</body>
+</html>
