@@ -27,7 +27,7 @@ var layerTree = function (options) {
             idCounter += 1;
             var layerDiv = document.createElement('div');
             layerDiv.className = buffer ? 'layer ol-unselectable buffering' : 'layer ol-unselectable';
-            layerDiv.title = layer.get('name') || 'Unnamed Layer';
+            layerDiv.title = layer.get('name') || 'Layer ohne Namen';
             layerDiv.id = layer.get('id');
             var layerSpan = document.createElement('span');
             layerSpan.textContent = layerDiv.title;
@@ -45,6 +45,7 @@ var layerTree = function (options) {
     } else {
         throw new Error('Invalid parameter(s) provided.');
     }
+
 };
 
 layerTree.prototype.createButton = function (elemName, elemTitle, elemType) {
@@ -250,21 +251,24 @@ layerTree.prototype.addVectorLayer = function (form) {
            x_values_array.push(x_value);    //zuerst ein X-Wert-Array zum X-Wert-Vergleich schaffen, und für Bounds
            y_values_array.push(y_value);    // und y-Wert-Array, aber nur für Bounds
         }
-        //var max_x, max_y, min_x, min_y, nw, sw, no, so;
-        //console.log(x_values_array)
-        max_x = Math.max(x_values_array) || x_values_array[0] //take first x-value as fallback if all are equal
-        //console.log(max_x)               
-        min_x = Math.min(x_values_array) || x_values_array[x_values_array.length-1] // take last x-value as fallback if all are equal 
-        //console.log(min_x)
-        max_y = Math.max(y_values_array) || y_values_array[0] 
-        //console.log(max_y)
-        min_y = Math.min(y_values_array) || y_values_array[y_values_array.length-1]
-        //console.log(min_y)
+       
 
-        
-        
-        extent = [min_x, min_y, max_x, max_y]
-        console.log("Extent:"+extent)
+//Math.max.apply(Math, array) !!!!!!!!!!!!!!!!!
+
+        max_x = Math.max.apply(Math,x_values_array) 
+        console.log("max_x: "+max_x)               
+        min_x = Math.min.apply(Math,x_values_array) 
+        console.log("min_x: "+min_x)
+        max_y = Math.max.apply(Math,y_values_array) 
+        console.log("max_y: "+max_y)
+        min_y = Math.min.apply(Math,y_values_array) 
+        console.log("min_y: "+min_y)
+
+        extent = [min_x.toString(), min_y.toString(), max_x.toString(), max_y.toString()] // to String?
+        console.log("Extent z270: "+extent)
+
+        //NUN MUSS MAN DEN EXTENT AUS DIESER FUNKTION HERAUSBRINGEN, SODASS ER IM GLOBAL SCOPE LESBAR IST!!!!!!!!
+
         
         
 
@@ -418,7 +422,9 @@ geojson_json.features.unshift(
         geojson_text = JSON.stringify(geojson_json);
         //console.log("geojson_text is now "+ geojson_text);
 
-        switch (form.format.value) {
+        //explicitly determine geojson format
+        var sourceFormat = new ol.format.GeoJSON();
+        /*switch (form.format.value) {
             case 'geojson':
                 sourceFormat = new ol.format.GeoJSON();
                 break;
@@ -433,10 +439,12 @@ geojson_json.features.unshift(
                 break;
             default:
                 return false;
-        }
-        //explicitly determine only web mercator
+        }*/
+        //explicitly determine only web mercator 
         var dataProjection = 'EPSG:3857'    //form.projection.value' || sourceFormat.readProjection(vectorData) || currentProj;
+        
         source.addFeatures(sourceFormat.readFeatures(geojson_text, {
+        //source.addFeatures(sourceFormat.readFeatures(geojson_text, {
             dataProjection: dataProjection,
             featureProjection: currentProj
         }));
@@ -450,7 +458,8 @@ geojson_json.features.unshift(
     var new_filename = file_start + '_fürMapit.geojson';
     //console.log(new_filename)
 
-   download(new_filename, geojson_export);
+   //download(new_filename, geojson_export);
+   save_as(geojson_export,new_filename)
     };//-------------------------------------------------------- Ende fr.onload
 
     //console.log("Extent: "+extent)
@@ -464,29 +473,13 @@ geojson_json.features.unshift(
     //console.log("Layer-Objekt: "+layer);
     this.addBufferIcon(layer);
     this.map.addLayer(layer);
-    this.messages.textContent = 'Vector layer added successfully.';
     
-    console.log(this.map.getSize())
-    console.log(this.map.getView())
-
-    //console.log(zoompoint)    //undefined! ... sollte eigentlich den Wert für center: ergeben
-
-    // Zoom zum ersten Feature, da zum Extent nicht geht.... immernoch kommt weder extent noch zoompoint an
-    /*this.map.setView( new ol.View({
-        projection: 'EPSG:3857', 
-        center: [1074072.75446, 6274807.424978], //zoompoint
-        zoom: 10
-        })
-    )*/
-    // geht nicht wirklich
-    /*
-    this.map.getView().fit([1074072.75446, 6274807.424978, 1594272.75446, 6895207.424978], {
-          //  size: this.map.getSize(), 
-          //  minResolution: 1000      
-        })
-        */
-    //geht nicht wirklich
-    //this.map.getView().setCenter([10000, 49000])    
+    this.messages.textContent = 'Geojson-Datei wurde hinzugefügt.';
+    
+    
+    //Zoom auf Layer, später mit extent -- wenn von hier aus erreichbar:
+    console.log("Extent außerhalb fr.onload-Event-Handler, innerhalb LayerTreeaddVectorLayer- fu: "+ extent)
+    this.map.getView().fit([1074072.75446, 6274807.424978, 1594272.75446, 6895207.424978], this.map.getSize())
 
     return this;
 }; // ------- Ende Fu layerTree.prototype.addVectorLayer
@@ -495,7 +488,7 @@ geojson_json.features.unshift(
 
 
 // Fu. muss auch innerhalb vom fr.onload stehen und  geojson_text oben definiert sein
-function download(filename, txt) {
+/*function download(filename, txt) {
     //console.log("3-Innerhalb download-fu: text-variable(ausgeojson_export übernommen) is now:" +txt);                
     var element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(txt));
@@ -507,8 +500,14 @@ function download(filename, txt) {
     element.click();
 
     document.body.removeChild(element);
-}
+}*/
 
+function save_as(content, fname){
+    var blob = new Blob([content], {
+        type: "text/plain;charset=utf-8"
+        });
+    saveAs(blob,fname)
+}
 
 
 function init() {
@@ -587,5 +586,15 @@ function init() {
         tree.addVectorLayer(this);
         this.parentNode.style.display = 'none';
     });
+
+    document.getElementById('fixed-div').addEventListener('click', function (evt) {
+    //console.log("Juhu")
+    document.getElementsByClassName('addvector')[0].click()
+    });
+
+
+    //Automatischer Click auf AddVectorLayer-Button
+    document.getElementsByClassName('addvector')[0].click()
+
 }
 document.addEventListener('DOMContentLoaded', init);
