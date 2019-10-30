@@ -373,7 +373,7 @@ Fehlenden Funktionallitäten aus Batch2.ps1:
 	//console.log(back_to_string)
 	document.getElementById('info_div').innerHTML += "Speichere veränderte CSV-Datei..."
 	
-	//save_as(back_to_string, neuer_dateiname)
+	save_as(back_to_string, neuer_dateiname)
 	} // -------------------Ende Funktion process
 
 	function save_as (content,fname){
