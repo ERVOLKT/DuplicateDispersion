@@ -12,7 +12,7 @@ function init() {
 		console.log("HTML-Input-Element [file_input] existiert nicht")
 	}
 
-	//-- info-label
+	//-- info-label rechts unten
 	var infoLabel = document.createElement('span');
     infoLabel.className = 'info-label';
     infoLabel.textContent = 'i';
@@ -99,6 +99,7 @@ function init() {
 
 	} // ----------------------------------------------------- Ende Funktion upload
 
+	//Haupt-fu process----------------------------------------------------------
 	function process(csv_tab, neuer_dateiname){
 		document.getElementById('info_div').innerHTML += "Verarbeite CSV-Datei...."
 		var zellenobjekt = csv_tab.data
@@ -144,6 +145,7 @@ Fehlenden Funktionallitäten aus Batch2.ps1:
 		--> evtl. späterumstellen, dass Feldwerte intern nicht als strings gehandhabt werden mit dynamicTyping
 */
 		
+		//Features als Layer der Map hinzufügen
 		display_features(zellenobjekt)
 
 
@@ -224,6 +226,13 @@ Fehlenden Funktionallitäten aus Batch2.ps1:
 	// --------------Attribute-Check:  
 			//Es fehlt nur noch das Hinzufügen und Füllen der fehlenden Spalten ... gefunden sind sie schon....
 			// Hinterher müssen auch die Checks für diese Spalten aktiviert und getestet werden...
+
+		var erhebungsgebiet_proj1 = []
+		var stadtteil_proj1 = []
+		var plz_proj1 = []
+		var projektgebiet01_proj1 = []
+
+
 		for (var zeilen_nr in zellenobjekt){
 			//spalte_standort_id = zellenobjekt[zeilen_nr].standort_id
 			//console.log(spalte_standort_id);
@@ -362,11 +371,112 @@ Fehlenden Funktionallitäten aus Batch2.ps1:
 					zellen_wert.replace(/[,:;"„'`´?!#-/\\]/g, '_')	
 				}
 
+				//Stadt-Einträge für Projektgebiet im erhebungsgebiet_proj1-array sammeln:
+				if (attribut_name === 'stadt'){	
+					if (zellen_wert === ''){
+					}
+					else{	
+						erhebungsgebiet_proj1.push(zellen_wert)
+					}
+				}
+
+				//Stadtteil-Einträge als Fallback1 für Projektgebiet im array sammeln:
+				if (attribut_name === 'stt'){	
+					if (zellen_wert === ''){
+					}
+					else{	
+						stadtteil_proj1.push(zellen_wert)
+					}
+				}
+
+				//PLZ-Einträge als Fallback2 für Projektgebiet im array sammeln:
+				if (attribut_name === 'plz'){	
+					if (zellen_wert === 0){
+					}
+					else{	
+						plz_proj1.push(zellen_wert.toString())
+					}
+				}
+				//Proj1-Einträge als Fallback3 für Projektgebiet im -array sammeln:
+				if (attribut_name === 'projektgebiet01'){	
+					if (zellen_wert === ''){
+					}
+					else{	
+						projektgebiet01_proj1.push(zellen_wert)
+					}
+				}
+
+
+
 				//--toB Continued
 
 
 			} // ---------------------- Ende Riesen-Check-Schleife
+
+			// -----------------Projektgebiet-automatisch-füllen vorbereiten-----------
+			//console.log(erhebungsgebiet_proj1);
+			//console.log(stadtteil_proj1);
+			//console.log(plz_proj1);
+			//console.log(projektgebiet01_proj1);
+			var proj1_start = ''
+			var heute = new Date();
+			var tagesdatum = heute.getFullYear()+'-'+(heute.getMonth()+1)+'-'+heute.getDate()
+			//console.log(tagesdatum)
+
+			//häufigste Nennung im array
+			function longest_common_starting_substring(arr1){
+				console.log("arr1: " + arr1);
+				var arr= arr1.concat().sort(),
+				a1= arr[0], a2= arr[arr.length-1], L= a1.length, i= 0;
+				while(i< L && a1.charAt(i)=== a2.charAt(i)) i++;
+				return a1.substring(0, i);
+			}
+
+			//Projektgebiet-Anfang inklusive Fallbacks vorbereiten
+			if (erhebungsgebiet_proj1.length > 0){
+				console.log("erhebungsgebiet_proj1 " +longest_common_starting_substring(erhebungsgebiet_proj1))
+				proj1_start = longest_common_starting_substring(erhebungsgebiet_proj1)	
+			} else {
+				if (stadtteil_proj1.length > 0) {
+					console.log("stadtteil_proj1 " +longest_common_starting_substring(stadtteil_proj1))
+					proj1_start = longest_common_starting_substring(stadtteil_proj1)
+				} 
+				else {
+					if (plz_proj1.length > 0) {
+						console.log("plz_proj1 "+ longest_common_starting_substring(plz_proj1))
+						proj1_start = longest_common_starting_substring(plz_proj1)
+					} else {
+							if (projektgebiet01_proj1.length > 0) {
+								console.log("projektgebiet01_proj1 " + longest_common_starting_substring(projektgebiet01_proj1))
+								proj1_start = longest_common_starting_substring(projektgebiet01_proj1)
+						} else {
+							proj1_start = 'Erhebung'
+						}	
+					}
+				}
+			}
+
+			//Projektgebiet01 zusammensetzen und einpflegen
+			var proj1_zus = proj1_start + '_' + tagesdatum
+			console.log(proj1_zus)
+
+			// Spaltenwerte für eine Spalte aller Zeilen
+			/*for (var zeilen_nr in zellenobjekt){
+				spalte_namen = zellenobjekt[zeilen_nr].name
+				console.log(spalte_namen);
+			}*/
+
+
+
+
+			
+
+
+
+
 		} //---------------------Ende Attribute-Check
+		
+
 
 	//Papa.unparse(data[, config])
 	var back_to_string = Papa.unparse(csv_tab)
