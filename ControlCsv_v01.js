@@ -135,7 +135,7 @@ function init() {
 
 /*
 Fehlenden Funktionallitäten aus Batch2.ps1:
-	- weiter ab z 497
+	- weiter ab z 526
 	- Attributecheck  mit Such-spalten  / Muss-Spalten: nur neue müssen noch hinzugefügt werden
 	- 
 	- Test mit komplett "vermurkstem" Datensatz wie aus ps-Tests für 
@@ -170,6 +170,14 @@ Fehlenden Funktionallitäten aus Batch2.ps1:
 			console.log("Fehlende Spalten: " +fehlende_spalten);
 		//console.log(zellenobjekt[0])
 		//console.log(csv_tab.meta.fields);
+
+			//HIER MUSS-SPALTEN über Schleife einfügen, mit dieser Syntax
+				// zuerst am Beispiel leistungsfaehigkeit
+			// Spaltenwerte für eine Spalte aller Zeilen
+			for (var zeilen_nr in zellenobjekt){
+				//spalte war leider vorher schon vorhanden obwohl als fehlend gefunden ???
+				zellenobjekt[zeilen_nr].leistungsfaehigkeit = ''	
+			}
 		}
 
 		//fehlende Spalten anlegen
@@ -227,11 +235,11 @@ Fehlenden Funktionallitäten aus Batch2.ps1:
 			//Es fehlt nur noch das Hinzufügen und Füllen der fehlenden Spalten ... gefunden sind sie schon....
 			// Hinterher müssen auch die Checks für diese Spalten aktiviert und getestet werden...
 
-		var erhebungsgebiet_proj1 = []
+		var ort_proj1 = []
 		var stadtteil_proj1 = []
 		var plz_proj1 = []
 		var projektgebiet01_proj1 = []
-
+		var proj1_fill = []
 
 		for (var zeilen_nr in zellenobjekt){
 			//spalte_standort_id = zellenobjekt[zeilen_nr].standort_id
@@ -371,12 +379,12 @@ Fehlenden Funktionallitäten aus Batch2.ps1:
 					zellen_wert.replace(/[,:;"„'`´?!#-/\\]/g, '_')	
 				}
 
-				//Stadt-Einträge für Projektgebiet im erhebungsgebiet_proj1-array sammeln:
+				//Stadt-Einträge für Projektgebiet im ort_proj1-array sammeln:
 				if (attribut_name === 'stadt'){	
 					if (zellen_wert === ''){
 					}
 					else{	
-						erhebungsgebiet_proj1.push(zellen_wert)
+						ort_proj1.push(zellen_wert)
 					}
 				}
 
@@ -414,7 +422,7 @@ Fehlenden Funktionallitäten aus Batch2.ps1:
 			} // ---------------------- Ende Riesen-Check-Schleife
 
 			// -----------------Projektgebiet-automatisch-füllen vorbereiten-----------
-			//console.log(erhebungsgebiet_proj1);
+			//console.log(ort_proj1);
 			//console.log(stadtteil_proj1);
 			//console.log(plz_proj1);
 			//console.log(projektgebiet01_proj1);
@@ -423,9 +431,9 @@ Fehlenden Funktionallitäten aus Batch2.ps1:
 			var tagesdatum = heute.getFullYear()+'-'+(heute.getMonth()+1)+'-'+heute.getDate()
 			//console.log(tagesdatum)
 
-			//häufigste Nennung im array
+			//häufigste Nennung in einem array
 			function longest_common_starting_substring(arr1){
-				console.log("arr1: " + arr1);
+				//console.log("arr1: " + arr1);
 				var arr= arr1.concat().sort(),
 				a1= arr[0], a2= arr[arr.length-1], L= a1.length, i= 0;
 				while(i< L && a1.charAt(i)=== a2.charAt(i)) i++;
@@ -433,9 +441,9 @@ Fehlenden Funktionallitäten aus Batch2.ps1:
 			}
 
 			//Projektgebiet-Anfang inklusive Fallbacks vorbereiten
-			if (erhebungsgebiet_proj1.length > 0){
-				console.log("erhebungsgebiet_proj1 " +longest_common_starting_substring(erhebungsgebiet_proj1))
-				proj1_start = longest_common_starting_substring(erhebungsgebiet_proj1)	
+			if (ort_proj1.length > 0){
+				//console.log("ort_proj1 " +longest_common_starting_substring(ort_proj1))
+				proj1_start = longest_common_starting_substring(ort_proj1)	
 			} else {
 				if (stadtteil_proj1.length > 0) {
 					console.log("stadtteil_proj1 " +longest_common_starting_substring(stadtteil_proj1))
@@ -455,35 +463,29 @@ Fehlenden Funktionallitäten aus Batch2.ps1:
 					}
 				}
 			}
-
-			//Projektgebiet01 zusammensetzen und einpflegen
-			var proj1_zus = proj1_start + '_' + tagesdatum
-			console.log(proj1_zus)
-
-			// Spaltenwerte für eine Spalte aller Zeilen
-			/*for (var zeilen_nr in zellenobjekt){
-				spalte_namen = zellenobjekt[zeilen_nr].name
-				console.log(spalte_namen);
-			}*/
-
-
-
-
+			//proj1_fill-array für Füllung vorbereiten
+			proj1_fill.push(proj1_start + '_' + tagesdatum)
 			
 
 
-
-
-		} //---------------------Ende Attribute-Check
+		} //---------------------Ende Attribute-Check-SChleife
 		
 
+		//letzten Wert aus projfill-array nehmen und 
+		// als Projektgebiet01 einiterieren, weil Auswahl durch longest_common_substr-Fu hier nicht griff...
+		//console.log(proj1_fill)
 
-	//Papa.unparse(data[, config])
-	var back_to_string = Papa.unparse(csv_tab)
-	//console.log(back_to_string)
-	document.getElementById('info_div').innerHTML += "Speichere veränderte CSV-Datei..."
-	
-	save_as(back_to_string, neuer_dateiname)
+		for (var zeilen_nr in zellenobjekt){
+			zellenobjekt[zeilen_nr].projektgebiet01 = proj1_fill[proj1_fill.length-1]
+			//zellenobjekt[zeilen_nr].projektgebiet01 = longest_common_starting_substring(proj1_fill)
+		}
+
+		//Papa.unparse(data[, config])
+		var back_to_string = Papa.unparse(csv_tab)
+		//console.log(back_to_string)
+		document.getElementById('info_div').innerHTML += "Speichere veränderte CSV-Datei..."
+		
+		save_as(back_to_string, neuer_dateiname)
 	} // -------------------Ende Funktion process
 
 	function save_as (content,fname){
