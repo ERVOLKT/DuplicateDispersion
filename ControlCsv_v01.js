@@ -1,3 +1,15 @@
+//TO DO: 
+
+/*
+	- Dateinamen github ändern für bessere Wartbarkeit... -> csv_master / geojson_master
+	- Test mit komplett "vermurkstem" Datensatz wie aus ps-Tests für Umsatzberechnung, Spaltenauffüllungen, 
+		ReplaceFunktionen (ersetzt hoffentlich nur "innerhalb" des Werts, ncith die String-Anführungszeichen darum)
+
+	- check auf null-Werte in den Spalten prim_sek / quelle_sek / erhebungszeitpunkt...
+		--> evtl. späterumstellen, dass Feldwerte intern nicht als strings gehandhabt werden mit dynamicTyping
+
+*/
+
 
 function init() {
 
@@ -138,17 +150,6 @@ function init() {
 				var zellen_wert = zellenobjekt[zeilen_nr][attribut_name]
 			}
 		}*/
-
-/*
-Fehlenden Funktionallitäten aus Batch2.ps1:
-	- Attributecheck  mit Such-spalten  / Muss-Spalten: nur neue müssen noch hinzugefügt werden
-	
-	- Test mit komplett "vermurkstem" Datensatz wie aus ps-Tests für 
-		Umsatzberechnung, Spaltenauffüllungen, 
-		ReplaceFunktionen (ersetzt hoffentlich nur "innerhalb" des Werts, ncith die String-Anführungszeichen darum)
-	- check auf null-Werte in den Spalten prim_sek / quelle_sek / erhebungszeitpunkt...
-		--> evtl. späterumstellen, dass Feldwerte intern nicht als strings gehandhabt werden mit dynamicTyping
-*/
 		
 		//Features als Layer der Map hinzufügen
 		display_features(zellenobjekt)
@@ -236,8 +237,6 @@ Fehlenden Funktionallitäten aus Batch2.ps1:
 		
 
 	// --------------Attribute-Check:  
-			//Es fehlt nur noch das Hinzufügen und Füllen der fehlenden Spalten ... gefunden sind sie schon....
-			// Hinterher müssen auch die Checks für diese Spalten aktiviert und getestet werden...
 
 		var ort_proj1 = []
 		var stadtteil_proj1 = []
@@ -519,20 +518,19 @@ Fehlenden Funktionallitäten aus Batch2.ps1:
 			//...  später manuell mit FaR ändern (.0)
 		var back_to_string = Papa.unparse(zellenobjekt)	
 
-		//im unparse-Ergebnis alle hoffentlich falschen double-Werte (Hsnr etc) ersetzen bevor gespeichert wird
+		//im unparse-Ergebnis "back_to_string" alle hoffentlich falschen double-Werte (Hsnr etc) ersetzen 
+			// ... als pre_save speichern und speichern
 		//	.replace(/(.0\D)/g, '')
-		//var after_unparse = '5.05,1.0,6627226.0'
-		var after_unparse = back_to_string.replace(/(.0,)/g, ',')
-		console.log(after_unparse)
+		//var pre_save = '5.05,1.0,6627226.0'
+		var pre_save = back_to_string.replace(/(\.0,)/g, ',')	// Achtung: Punkt escapen!
+		//console.log(pre_save)
 
 		
 		document.getElementById('info_div').innerHTML += "Speichere veränderte CSV-Datei..."
-		
-		save_as(back_to_string, neuer_dateiname)
-		//save_as(after_unparse, neuer_dateiname)
+		save_as(pre_save, neuer_dateiname)
 	} // -------------------Ende Funktion process
 
-
+//Dresden_2019-11-4
 
 	
 
