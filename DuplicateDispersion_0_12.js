@@ -270,9 +270,6 @@ layerTree.prototype.addVectorLayer = function (form) {
         //NUN MUSS MAN DEN EXTENT AUS DIESER FUNKTION HERAUSBRINGEN, SODASS ER IM GLOBAL SCOPE LESBAR IST!!!!!!!!
 
         
-        
-
-
         for (xx in geojson_json.features){
             var xx_value = geojson_json.features[xx].geometry.coordinates[0][0]
             //console.log("xx_value: "+xx_value);
@@ -333,90 +330,90 @@ layerTree.prototype.addVectorLayer = function (form) {
                 //console.log(geojson_json.features)
             }
         
-        }
+        }//-----------------Ende Raumkorrektur-Schleife
         //console.log(dispersion_history.toString())
         
 
-//Neues Dummy-Feature am Anfang unterbringen
-geojson_json.features.unshift(
-{"type":"Feature",
-"geometry":{"type":"MultiPoint","coordinates":[[1178606.24072,6010867.34820]]},
-"properties":{
-    "name":"False_Dummy",
-    "standort_id":0,
-    "addr_revgc_locked": 0,
-    "plz":0,"stadt":"",
-    "stadtbezirk":"",
-    "stt":"","str":"",
-    "hsnr":0,"hsz":"",
-    "lage":0,
-    "vk_gesamt":0,
-    "brn":99,
-    "bt":0,
-    "fil":0,
-    "hwg":0,
-    "leistungsfaehigkeit":"",
-    "flaech_leist":0,
-    "umsatz_mio_brutto":0.0,
-    "bemerkungen":"",
-    "zentr_versorgbereich":"",
-    "mbu_10":0.0,
-    "mbu_20":0.0,
-    "mbu_30":0.0,
-    "mbu_31":0.0,
-    "mbu_32":0.0,
-    "mbu_33":0.0,
-    "mbu_40":0.0,
-    "mbu_41":0.0,
-    "mbu_42_43":0.0,
-    "mbu_44":0.0,
-    "mbu_50":0.0,
-    "mbu_51_52_53":0.0,
-    "mbu_54":0.0,
-    "mbu_57_58":0.0,
-    "mbu_59":0.0,
-    "mbu_60":0.0,
-    "mbu_61":0.0,
-    "mbu_62":0.0,
-    "mbu_63":0.0,
-    "mbu_65":0.0,
-    "mbu_70":0.0,
-    "mbu_71":0.0,
-    "mbu_72":0.0,
-    "mbu_73":0.0,
-    "mbu_74":0.0,
-    "mbu_76":0.0,
-    "mbu_77":0.0,
-    "mbu_801":0.0,
-    "mbu_802":0.0,
-    "mbu_803":0.0,
-    "mbu_81":0.0,
-    "mbu_82":0.0,
-    "mbu_83_84":0.0,
-    "mbu_85":0.0,
-    "mbu_86":0.0,
-    "mbu_87":0.0,
-    "baumarkt_vk_innen":0,
-    "baumarkt_vk_dach_freifl":0,
-    "baumarkt_vk_freifl":0,
-    "xcoor_r":1178606.24072,
-    "ycoor_r":6010867.34820,
-    "projektgebiet01":"",
-    "projektgebiet02":"",
-    "projektgebiet03":"",
-    "analyseart":"",
-    "prim_sek":"",
-    "quelle_sek":"",
-    "vollerheb_teilsort":"",
-    "zone":"",
-    "ctriso":"",
-    "umsatz_gesch":0.0,
-    "erheber_prim":"",
-    "erhebungszeitpunkt":""
-    },
-"id":"fid--24b7b2c7_16b999abbc4_-7c6f"})
+        //Neues Dummy-Feature am Anfang unterbringen
+        geojson_json.features.unshift(
+        {"type":"Feature",
+        "geometry":{"type":"MultiPoint","coordinates":[[1178606.24072,6010867.34820]]},
+        "properties":{
+            "name":"False_Dummy",
+            "standort_id":0,
+            "addr_revgc_locked": 0,
+            "plz":0,"stadt":"",
+            "stadtbezirk":"",
+            "stt":"","str":"",
+            "hsnr":0,"hsz":"",
+            "lage":0,
+            "vk_gesamt":0,
+            "brn":99,
+            "bt":0,
+            "fil":0,
+            "hwg":0,
+            "leistungsfaehigkeit":"",
+            "flaech_leist":0,
+            "umsatz_mio_brutto":0.0,
+            "bemerkungen":"",
+            "zentr_versorgbereich":"",
+            "mbu_10":0.0,
+            "mbu_20":0.0,
+            "mbu_30":0.0,
+            "mbu_31":0.0,
+            "mbu_32":0.0,
+            "mbu_33":0.0,
+            "mbu_40":0.0,
+            "mbu_41":0.0,
+            "mbu_42_43":0.0,
+            "mbu_44":0.0,
+            "mbu_50":0.0,
+            "mbu_51_52_53":0.0,
+            "mbu_54":0.0,
+            "mbu_57_58":0.0,
+            "mbu_59":0.0,
+            "mbu_60":0.0,
+            "mbu_61":0.0,
+            "mbu_62":0.0,
+            "mbu_63":0.0,
+            "mbu_65":0.0,
+            "mbu_70":0.0,
+            "mbu_71":0.0,
+            "mbu_72":0.0,
+            "mbu_73":0.0,
+            "mbu_74":0.0,
+            "mbu_76":0.0,
+            "mbu_77":0.0,
+            "mbu_801":0.0,
+            "mbu_802":0.0,
+            "mbu_803":0.0,
+            "mbu_81":0.0,
+            "mbu_82":0.0,
+            "mbu_83_84":0.0,
+            "mbu_85":0.0,
+            "mbu_86":0.0,
+            "mbu_87":0.0,
+            "baumarkt_vk_innen":0,
+            "baumarkt_vk_dach_freifl":0,
+            "baumarkt_vk_freifl":0,
+            "xcoor_r":1178606.24072,
+            "ycoor_r":6010867.34820,
+            "projektgebiet01":"",
+            "projektgebiet02":"",
+            "projektgebiet03":"",
+            "analyseart":"",
+            "prim_sek":"",
+            "quelle_sek":"",
+            "vollerheb_teilsort":"",
+            "zone":"",
+            "ctriso":"",
+            "umsatz_gesch":0.0,
+            "erheber_prim":"",
+            "erhebungszeitpunkt":""
+            },
+        "id":"fid--24b7b2c7_16b999abbc4_-7c6f"})
 
-//console.log(geojson_json.features)
+        //console.log(geojson_json.features)
 
         //zurück als Text, der unten in geojson_export gepusht und dann gedownloaded wird
         geojson_text = JSON.stringify(geojson_json);
@@ -449,17 +446,17 @@ geojson_json.features.unshift(
             featureProjection: currentProj
         }));
 
-    // Download-Content ist das umgewandelte geojson-Objekt (s.o.)
-    geojson_export  = geojson_text;
-    //console.log("2-Innerhalb addvectorlayer und  darin filereader-onload-fu :geojson_export is now:" +geojson_export);    
-    
-    //hier nun auch die richtige Datenquelle angeben
-    var file_start = file.name.substr(0,file.name.indexOf('.'));
-    var new_filename = file_start + '_fürMapit.geojson';
-    //console.log(new_filename)
+        // Download-Content ist das umgewandelte geojson-Objekt (s.o.)
+        geojson_export  = geojson_text;
+        //console.log("2-Innerhalb addvectorlayer und  darin filereader-onload-fu :geojson_export is now:" +geojson_export);    
+        
+        //hier nun auch die richtige Datenquelle angeben
+        var file_start = file.name.substr(0,file.name.indexOf('.'));
+        var new_filename = file_start + '_fürMapit.geojson';
+        //console.log(new_filename)
 
-   //download(new_filename, geojson_export);
-   save_as(geojson_export,new_filename)
+        //download(new_filename, geojson_export);
+        save_as(geojson_export,new_filename)
     };//-------------------------------------------------------- Ende fr.onload
 
     //console.log("Extent: "+extent)
@@ -483,8 +480,6 @@ geojson_json.features.unshift(
 
     return this;
 }; // ------- Ende Fu layerTree.prototype.addVectorLayer
-
-
 
 
 // Fu. muss auch innerhalb vom fr.onload stehen und  geojson_text oben definiert sein
@@ -511,8 +506,9 @@ function save_as(content, fname){
 
 
 function init() {
-
     document.removeEventListener('DOMContentLoaded', init);
+
+    //Map-Objekt erstellen
     var map = new ol.Map({
         target: 'map',
         layers: [
@@ -535,7 +531,7 @@ function init() {
                 }),
                 name: 'World Capitals'
             })*/
-        ],
+            ],
         controls: [
             //Define the default controls
             new ol.control.Zoom({
@@ -556,14 +552,14 @@ function init() {
             //resolution: 6000,
             zoom: 6
         })
-    });
+    }); // Ende Map-Objekt
 
 
     console.log(map.getLayers().array_);
 
     var tree = new layerTree({map: map, target: 'layertree', messages: 'messageBar'})
         .createRegistry(map.getLayers().item(0))
-        //.createRegistry(map.getLayers().item(1));
+        //.createRegistry(map.getLayers().item(1)); // wms-Layer wegnehmen
 
     document.getElementById('checkwmslayer').addEventListener('click', function () {
         tree.checkWmsLayer(this.form);
@@ -597,5 +593,5 @@ function init() {
     //Automatischer Click auf AddVectorLayer-Button
     document.getElementsByClassName('addvector')[0].click()
 
-}
+}//--------------------------------------------------Ende init-Fu
 document.addEventListener('DOMContentLoaded', init);
