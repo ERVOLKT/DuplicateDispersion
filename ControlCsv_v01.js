@@ -81,7 +81,13 @@ function init() {
 			document.getElementById('info_div').innerHTML += "Lese CSV-Datei......"
 			var csvData = event.target.result;
 			 
-			var tab_daten = Papa.parse(csvData, {header : true});
+			var tab_daten = Papa.parse(csvData, 
+				{
+					header : true
+					//, dynamicTyping: true
+				}
+			);
+
 			//console.log(tab_daten);
 			console.log("Csv hat "+tab_daten.data.length + " Zeilen. Das Trennzeichen ist ein: '"+ tab_daten.meta.delimiter + "'. Die Spalten heißen: "+ tab_daten.meta.fields + ".")
 			//return tab_daten; //???????? wie bringe ich die Daten nach Draußen in eine andere Funktion? 
@@ -104,7 +110,7 @@ function init() {
 		document.getElementById('info_div').innerHTML += "Verarbeite CSV-Datei...."
 		var zellenobjekt = csv_tab.data
 
-	// Syntax-Setup für Tabellenchecks
+	// #########  Syntax-Setup für Tabellenchecks  ###############
 		//Eine Spalte einer Zeile
 		//console.log(zellenobjekt[0].standort_id)
 		
@@ -135,9 +141,8 @@ function init() {
 
 /*
 Fehlenden Funktionallitäten aus Batch2.ps1:
-	- weiter ab z 526
 	- Attributecheck  mit Such-spalten  / Muss-Spalten: nur neue müssen noch hinzugefügt werden
-	- 
+	
 	- Test mit komplett "vermurkstem" Datensatz wie aus ps-Tests für 
 		Umsatzberechnung, Spaltenauffüllungen, 
 		ReplaceFunktionen (ersetzt hoffentlich nur "innerhalb" des Werts, ncith die String-Anführungszeichen darum)
@@ -149,65 +154,68 @@ Fehlenden Funktionallitäten aus Batch2.ps1:
 		display_features(zellenobjekt)
 
 
-		//check auf Spalten
-		var suchspaltenarray = ["name", "prim_sek","quelle_sek","brn","bt","hwg","vk_gesamt","lage","erhebungszeitpunkt","standort_id","leistungsfaehigkeit","mbu_10","mbu_20","mbu_30","mbu_31","mbu_32","mbu_33","mbu_40","mbu_41","mbu_42_43","mbu_44","mbu_50","mbu_51_52_53","mbu_54","mbu_57_58","mbu_59","mbu_60","mbu_61","mbu_62","mbu_63","mbu_65","mbu_70","mbu_71","mbu_72","mbu_73","mbu_74","mbu_76","mbu_77","mbu_801","mbu_802","mbu_803","mbu_81","mbu_82","mbu_83_84","mbu_85","mbu_86","mbu_87", "X", "Y", "xcoor_r","ycoor_r","changed","pictureFolder","pictureName","picturePath","created","altitude","accuracy", "vollerheb_teilsort", "plz", "stadt", "stt", "str", "hsnr" , "hsz", "flaech_leist", "umsatz_mio_brutto", "baumarkt_vk_innen", "umsatz_mio_brutto", "baumarkt_vk_dach_freifl", "baumarkt_vk_freifl", "erheber_prim", "fil", "bemerkungen" , "projektgebiet01", "addr_revgc_locked"]
+		//check auf Spalten: muss_spalten-Array gibt die zu suchenden Spalten vor. 
+			//Die Differenz wird in array fehlende_spalten gepusht und automatisch darüber angelegt.
+		var muss_spalten = ["ctriso", "name", "prim_sek","quelle_sek","brn","bt","hwg","vk_gesamt","lage","erhebungszeitpunkt","standort_id","leistungsfaehigkeit","mbu_10","mbu_20","mbu_30","mbu_31","mbu_32","mbu_33","mbu_40","mbu_41","mbu_42_43","mbu_44","mbu_50","mbu_51_52_53","mbu_54","mbu_57_58","mbu_59","mbu_60","mbu_61","mbu_62","mbu_63","mbu_65","mbu_70","mbu_71","mbu_72","mbu_73","mbu_74","mbu_76","mbu_77","mbu_801","mbu_802","mbu_803","mbu_81","mbu_82","mbu_83_84","mbu_85","mbu_86","mbu_87", "X", "Y", "xcoor_r","ycoor_r","changed","pictureFolder","pictureName","picturePath","created","altitude","accuracy", "vollerheb_teilsort", "plz", "stadt", "stt", "str", "hsnr" , "hsz", "flaech_leist", "umsatz_mio_brutto", "baumarkt_vk_innen", "umsatz_mio_brutto", "baumarkt_vk_dach_freifl", "baumarkt_vk_freifl", "erheber_prim", "fil", "bemerkungen" , "projektgebiet01", "addr_revgc_locked"]
 		var fehlende_spalten = []
+		
 		//console.log(zellenobjekt[0])
-		for (var such_nr in suchspaltenarray){ //stimmt
-			//console.log(suchspaltenarray[such_nr]);	// stimmt
+		for (var such_nr in muss_spalten){ //stimmt
+			//console.log(muss_spalten[such_nr]);	// stimmt
 			
 			// Verlgeich mit 1. Zeile im Zellenobjekt:
 							//Suchsyntax für strings in arrays:         array.find(function(array) {return array == suchwert;});
 							// ABER auf der Zeilenebene liegt keine Array vor, sondern ein einfaches OBJEKT , d.h. einfachere Syntax
-			if (suchspaltenarray[such_nr] in zellenobjekt[0]){
+			if (muss_spalten[such_nr] in zellenobjekt[0]){
 				//console.log("it is true!")
 			} else {
-				console.log("Attribut "+ suchspaltenarray[such_nr]+ " ist nicht in csv-Datei vorhanden und wird vorgemerkt.")
-				fehlende_spalten.push(suchspaltenarray[such_nr])
+				console.log("Attribut "+ muss_spalten[such_nr]+ " ist nicht in csv-Datei vorhanden und wird vorgemerkt.")
+				fehlende_spalten.push(muss_spalten[such_nr])
 			}
 		}
+
 		if (fehlende_spalten.length > 0){
-			console.log("Fehlende Spalten: " +fehlende_spalten);
-		//console.log(zellenobjekt[0])
-		//console.log(csv_tab.meta.fields);
+			console.log("---------------- Fehlende Spalten werden angelegt : " +fehlende_spalten);
 
-			//HIER MUSS-SPALTEN über Schleife einfügen, mit dieser Syntax
-				// zuerst am Beispiel leistungsfaehigkeit
-			// Spaltenwerte für eine Spalte aller Zeilen
+			//dynamisch leere Spalten anlegen
 			for (var zeilen_nr in zellenobjekt){
-				//spalte war leider vorher schon vorhanden obwohl als fehlend gefunden ???
-				zellenobjekt[zeilen_nr].leistungsfaehigkeit = ''	
+				
+				for (var anlege_spalte in fehlende_spalten){
+					zellenobjekt[zeilen_nr][fehlende_spalten[anlege_spalte]] = ''	
+				}
 			}
 		}
 
-		//fehlende Spalten anlegen
 
-
-	// Umsatzberechnung
-			// wenn vk und flcähenleistung schonmal in der 1. Zeile vorhaden sind ist gut...
-	if(('vk_gesamt', 'flaech_leist') in zellenobjekt[0]){		
-		//alert('hhoray both!')
-		for (var zeilen_nr in zellenobjekt){
-			flächenleistung = zellenobjekt[zeilen_nr].flaech_leist
-			//console.log(flächenleistung);
-			verkaufsfläche = zellenobjekt[zeilen_nr].vk_gesamt
-			if (!(parseInt(flächenleistung)  <= 1) || !(parseInt(verkaufsfläche) <= 1)){
-			//$umsatz_mio_neu = ([int]$Zeile."vk_gesamt" * [int]$Zeile."flaech_leist" / 1000000) 
-            var umsatz_mio_neu = parseInt(verkaufsfläche) * parseInt(flächenleistung) / 1000000
-			//console.log("Bisheriger Eintrag bei Umsatz: "+zellenobjekt[zeilen_nr].umsatz_mio_brutto +".Berechne Umsatz...")
-			zellenobjekt[zeilen_nr].umsatz_mio_brutto = umsatz_mio_neu;
-			//console.log("Errechneter Umsatz: "+zellenobjekt[zeilen_nr].umsatz_mio_brutto)
+		// Umsatzberechnung
+				// wenn vk und flcähenleistung schonmal in der 1. Zeile vorhaden sind ist gut...
+		if(('vk_gesamt', 'flaech_leist') in zellenobjekt[0]){		
+			//alert('hhoray both!')
+			for (var zeilen_nr in zellenobjekt){
+				flächenleistung = zellenobjekt[zeilen_nr].flaech_leist
+				//console.log(flächenleistung);
+				verkaufsfläche = zellenobjekt[zeilen_nr].vk_gesamt
+				if (!(parseInt(flächenleistung)  <= 1) || !(parseInt(verkaufsfläche) <= 1)){
+				//$umsatz_mio_neu = ([int]$Zeile."vk_gesamt" * [int]$Zeile."flaech_leist" / 1000000) 
+	            var umsatz_mio_neu = parseInt(verkaufsfläche) * parseInt(flächenleistung) / 1000000
+				//console.log("Bisheriger Eintrag bei Umsatz: "+zellenobjekt[zeilen_nr].umsatz_mio_brutto +".Berechne Umsatz...")
+				zellenobjekt[zeilen_nr].umsatz_mio_brutto = umsatz_mio_neu;
+				//console.log("Errechneter Umsatz: "+zellenobjekt[zeilen_nr].umsatz_mio_brutto)
+				}
+				else {
+					console.log("flächenleistung oder VK kleinergleich 1. Umsatz für Eintrag  '"+zellenobjekt[zeilen_nr].name+"' nicht berechnet.")
+				}
 			}
-			else {
-				console.log("flächenleistung oder VK kleinergleich 1. Umsatz für Eintrag  '"+zellenobjekt[zeilen_nr].name+"' nicht berechnet.")
-			}
-		}
-	} else{
-		console.log("vk_gesamt oder flaech_leist oder beide waren nciht in 1. Zeile vorhanden")
-	} 
+		} else{
+			console.log("vk_gesamt oder flaech_leist oder beide waren nciht in 1. Zeile vorhanden")
+		} 
 	
-			
-		for (field in fehlende_spalten){
+		/*	
+		//...hatte zum Spalten-Einfügen funktioniert,
+		//	...allerdings nur für den Export über Papa.unparse(csv_tab), 
+		//	... war so im zellenobjekt nicht log-bar und schien deshalb nicht zu funktionieren
+		//	... jetzt wird ohinehin Papa.unparse(zellenobjekt) verwendet
+		for (field in fehlende_spalten){	
 			//csv_tab.meta.fields.push('leistungsfaehigkeit');
 			console.log("Füge Attribut "+ fehlende_spalten[field] + " ein.")
 			// so kommen die Felder zur Meta-Spalten-Übersicht, aber nicht zum Objekt selbst
@@ -217,12 +225,8 @@ Fehlenden Funktionallitäten aus Batch2.ps1:
 			for (row in zellenobjekt){
 				row[fehlende_spalten[field]] = '';
 			}
-			//auch mit dieser Syntax nicht:  ?
-			/*for (var i = 0; i < fehlende_spalten.length; ++i){
-				console.log(fehlende_spalten[i])
-				fehlende_spalten[i][field]= '';
-			}*/
 		}
+		*/
 
 		
 		//console.log(zellenobjekt[0])
@@ -355,11 +359,14 @@ Fehlenden Funktionallitäten aus Batch2.ps1:
 				}*/
 
 				//Hausnummern, plz, addr_revgc_locked als integer statt real oder string garantieren
+					// in Konsole richtig, leider nciht in csv!!!
 				if (attribut_name === 'hsnr' || attribut_name === 'plz' || attribut_name === 'addr_revgc_locked'){	
 					if (typeof(zellen_wert) === 'string'){
 						//console.log("ist string")
 						zellen_wert = parseInt(zellen_wert,10)
 						console.log("Attribut "+ attribut_name + " ist " + typeof(zellen_wert) + ", "+ zellen_wert) // vl. noch Nummern-anbieter anzeigen
+					} else {
+						console.log(attribut_name + " ist KEIN String!")
 					}
 				}
 
@@ -431,7 +438,7 @@ Fehlenden Funktionallitäten aus Batch2.ps1:
 			var tagesdatum = heute.getFullYear()+'-'+(heute.getMonth()+1)+'-'+heute.getDate()
 			//console.log(tagesdatum)
 
-			//häufigste Nennung in einem array
+			//häufigste Nennung eines Substrings in einem array
 			function longest_common_starting_substring(arr1){
 				//console.log("arr1: " + arr1);
 				var arr= arr1.concat().sort(),
@@ -470,23 +477,64 @@ Fehlenden Funktionallitäten aus Batch2.ps1:
 
 		} //---------------------Ende Attribute-Check-SChleife
 		
-
-		//letzten Wert aus projfill-array nehmen und 
-		// als Projektgebiet01 einiterieren, weil Auswahl durch longest_common_substr-Fu hier nicht griff...
-		//console.log(proj1_fill)
+		//Projektgebiet einsetzen
+			//letzten Wert aus projfill-array nehmen und 
+			// als Projektgebiet01 einiterieren, weil Auswahl durch longest_common_substr-Fu hier nicht griff...
+			//console.log(proj1_fill)
 
 		for (var zeilen_nr in zellenobjekt){
 			zellenobjekt[zeilen_nr].projektgebiet01 = proj1_fill[proj1_fill.length-1]
 			//zellenobjekt[zeilen_nr].projektgebiet01 = longest_common_starting_substring(proj1_fill)
 		}
 
-		//Papa.unparse(data[, config])
-		var back_to_string = Papa.unparse(csv_tab)
-		//console.log(back_to_string)
+		//Matching: Spaltenumbenennungen: Koordinaten aus aktuellen mobilen Werten für X und Y, die zu xcoor_r und ycoor_r werden
+		//(xcoor_r->xcoor_OLD | x -> xcoor_r & ycoor_r->ycoor_OLD | y -> ycoor_r) 
+
+		for (var zeilen_nr in zellenobjekt){
+			//console.log("xcoor_r vorher: " +zellenobjekt[zeilen_nr].xcoor_r)
+			zellenobjekt[zeilen_nr].xcoor_OLD = zellenobjekt[zeilen_nr].xcoor_r
+			//console.log("xcoor_OLD aus xcoor_r nachher: " +zellenobjekt[zeilen_nr].xcoor_OLD)
+			delete zellenobjekt[zeilen_nr].xcoor_r
+			zellenobjekt[zeilen_nr].xcoor_r = zellenobjekt[zeilen_nr].X
+			//console.log("xcoor_r aus x nachher: " +zellenobjekt[zeilen_nr].xcoor_r)
+			
+			zellenobjekt[zeilen_nr].ycoor_OLD = zellenobjekt[zeilen_nr].ycoor_r
+			delete zellenobjekt[zeilen_nr].ycoor_r
+			zellenobjekt[zeilen_nr].ycoor_r = zellenobjekt[zeilen_nr].Y
+			
+		}	//geht .. nicht wundern, mobile Erfassung liefert nur zwei Nachkomma-Stellen, Server jedoch mehr...
+
+
+		//Anführungszeichen müssen nicht wie bei Powershell gelöscht werden
+
+
+		// Daten zurückverwandeln
+			/* ...geändert auf zellenobjekt statt csv_tab als input, 
+				--> + neue Spalte wird mit in csv übernommen, bei csv-tab nicht (dort wird xcoor_r geleert und keine neue Spalte entsteht)
+				--> - ich könnte  Änderungen verlieren, die sich auf csv_tab und nicht auf zellenobbjekt bezogen wie z.B. die 3 neu angelegten Baumarkt-Spalten (fixed)
+				-->		....NACHCHECKEN, ob noch etwas verloren geht bzw, auf csv-tab zugreift!!!!
+			*/
+
+		//durch unparse entstehen leider falsche Kommawerte in Hsnr / plz statt int 
+			//...  später manuell mit FaR ändern (.0)
+		var back_to_string = Papa.unparse(zellenobjekt)	
+
+		//im unparse-Ergebnis alle hoffentlich falschen double-Werte (Hsnr etc) ersetzen bevor gespeichert wird
+		//	.replace(/(.0\D)/g, '')
+		//var after_unparse = '5.05,1.0,6627226.0'
+		var after_unparse = back_to_string.replace(/(.0,)/g, ',')
+		console.log(after_unparse)
+
+		
 		document.getElementById('info_div').innerHTML += "Speichere veränderte CSV-Datei..."
 		
 		save_as(back_to_string, neuer_dateiname)
+		//save_as(after_unparse, neuer_dateiname)
 	} // -------------------Ende Funktion process
+
+
+
+	
 
 	function save_as (content,fname){
 
@@ -499,6 +547,7 @@ Fehlenden Funktionallitäten aus Batch2.ps1:
 	    });
 	    saveAs(blob, fname); 
 	}//---------------------Ende Fu SaveAs
+
 
 	function display_features(input_features){
 		document.getElementById('info_div').innerHTML += 'Füge Standorte der Karte hinzu...'
