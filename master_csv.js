@@ -1,9 +1,13 @@
 //TO DO: 
 
 /*
-	- Dateinamen github ändern für bessere Wartbarkeit... -> csv_master / geojson_master
+	- Leider im Fix der BRN = -1 - problematik ein Fehler aufgetaucht, der die Spalten im CSV  verschiebt ...
+	- Sonderzeichen z.B. im Namen gehen immer noch durch...
+	- addr_revgc_locked - Feld im master_geojson als "Adresse manuell" erstellen und im master_csv zurückbenennen
+
 	- Test mit komplett "vermurkstem" Datensatz wie aus ps-Tests für Umsatzberechnung, Spaltenauffüllungen, 
 		ReplaceFunktionen (ersetzt hoffentlich nur "innerhalb" des Werts, ncith die String-Anführungszeichen darum)
+
 
 	- check auf null-Werte in den Spalten prim_sek / quelle_sek / erhebungszeitpunkt...
 		--> evtl. späterumstellen, dass Feldwerte intern nicht als strings gehandhabt werden mit dynamicTyping
@@ -90,7 +94,8 @@ function init() {
 		reader.readAsText(file);
 
 		reader.onload = function(event) {
-			document.getElementById('info_div').innerHTML += "Lese CSV-Datei......"
+			document.getElementById('info_div').innerHTML = ""
+			document.getElementById('info_div').innerHTML += "<p> Lese CSV-Datei......</p>"
 			var csvData = event.target.result;
 			 
 			var tab_daten = Papa.parse(csvData, 
@@ -110,16 +115,16 @@ function init() {
 			process(tab_daten, new_filename)	// --> Neue 2.Fu innerhalb dieser aufrufen, die auf gleicher Ebene existiert
 		};
 		reader.onerror = function() {
-			document.getElementById('info_div').innerHTML += ('Kann die Datei nicht lesen: ' + file.fileName);
+			document.getElementById('info_div').innerHTML += ('<p> Kann die Datei nicht lesen: ' + file.fileName + ' </p>');
 		};
 
-
+//7m3tns_2019-11-5
 
 	} // ----------------------------------------------------- Ende Funktion upload
 
 	//Haupt-fu process----------------------------------------------------------
 	function process(csv_tab, neuer_dateiname){
-		document.getElementById('info_div').innerHTML += "Verarbeite CSV-Datei...."
+		document.getElementById('info_div').innerHTML += "<p>Verarbeite CSV-Datei....</p>"
 		var zellenobjekt = csv_tab.data
 
 	// #########  Syntax-Setup für Tabellenchecks  ###############
@@ -157,7 +162,8 @@ function init() {
 
 		//check auf Spalten: muss_spalten-Array gibt die zu suchenden Spalten vor. 
 			//Die Differenz wird in array fehlende_spalten gepusht und automatisch darüber angelegt.
-		var muss_spalten = ["ctriso", "name", "prim_sek","quelle_sek","brn","bt","hwg","vk_gesamt","lage","erhebungszeitpunkt","standort_id","leistungsfaehigkeit","mbu_10","mbu_20","mbu_30","mbu_31","mbu_32","mbu_33","mbu_40","mbu_41","mbu_42_43","mbu_44","mbu_50","mbu_51_52_53","mbu_54","mbu_57_58","mbu_59","mbu_60","mbu_61","mbu_62","mbu_63","mbu_65","mbu_70","mbu_71","mbu_72","mbu_73","mbu_74","mbu_76","mbu_77","mbu_801","mbu_802","mbu_803","mbu_81","mbu_82","mbu_83_84","mbu_85","mbu_86","mbu_87", "X", "Y", "xcoor_r","ycoor_r","changed","pictureFolder","pictureName","picturePath","created","altitude","accuracy", "vollerheb_teilsort", "plz", "stadt", "stt", "str", "hsnr" , "hsz", "flaech_leist", "umsatz_mio_brutto", "baumarkt_vk_innen", "umsatz_mio_brutto", "baumarkt_vk_dach_freifl", "baumarkt_vk_freifl", "erheber_prim", "fil", "bemerkungen" , "projektgebiet01", "addr_revgc_locked"]
+		var muss_spalten = ["ctriso", "name", "prim_sek","quelle_sek","brn","bt","hwg","vk_gesamt","lage","erhebungszeitpunkt","standort_id","leistungsfaehigkeit","mbu_10","mbu_20","mbu_30","mbu_31","mbu_32","mbu_33","mbu_40","mbu_41","mbu_42_43","mbu_44","mbu_50","mbu_51_52_53","mbu_54","mbu_57_58","mbu_59","mbu_60","mbu_61","mbu_62","mbu_63","mbu_65","mbu_70","mbu_71","mbu_72","mbu_73","mbu_74","mbu_76","mbu_77","mbu_801","mbu_802","mbu_803","mbu_81","mbu_82","mbu_83_84","mbu_85","mbu_86","mbu_87", "X", "Y", "xcoor_r","ycoor_r","changed","pictureFolder","pictureName","picturePath","created","altitude","accuracy", "vollerheb_teilsort", "plz", "stadt", "stt", "str", "hsnr" , "hsz", "flaech_leist", "umsatz_mio_brutto", "baumarkt_vk_innen", "umsatz_mio_brutto", "baumarkt_vk_dach_freifl", "baumarkt_vk_freifl", "erheber_prim", "fil", "bemerkungen" , "projektgebiet01", "adresse_manuell"]
+		//"addr_revgc_locked"
 		var fehlende_spalten = []
 		
 		//console.log(zellenobjekt[0])
@@ -258,9 +264,9 @@ function init() {
 				// Alle  Spalten jeder Zeile  -1 -> 0 ersetzen, AUßER bei Standort-ID > (muss vor den Stadnort-ID-Änderungen stehen [hier ins else gepackt]...) 
 				if (attribut_name !== 'standort_id'){	
 					if (zellen_wert === '-1'){
-						//console.log("Wert -1 bei Objekt-Nummer "+ zeilen_nr + " (Name: '" + zellenobjekt[zeilen_nr].name+ "')  ,  Spalte [" + attribut_name + "] entdeckt. Wird auf 0 gesetzt")
+						console.log("Wert -1 bei Objekt-Nummer "+ zeilen_nr + " (Name: '" + zellenobjekt[zeilen_nr].name+ "')  ,  Spalte [" + attribut_name + "] entdeckt. Wird auf 0 gesetzt")
 						zellen_wert = '0';
-						//console.log("Neuer Wert für "+zellenobjekt[zeilen_nr].name+ "[" +attribut_name+ "]: "+zellen_wert)
+						console.log("Neuer Wert für "+zellenobjekt[zeilen_nr].name+ "[" +attribut_name+ "]: "+zellen_wert)
 					}else {
 						//console.log(attribut_name)
 					}
@@ -363,7 +369,7 @@ function init() {
 					if (typeof(zellen_wert) === 'string'){
 						//console.log("ist string")
 						zellen_wert = parseInt(zellen_wert,10)
-						console.log("Attribut "+ attribut_name + " ist " + typeof(zellen_wert) + ", "+ zellen_wert) // vl. noch Nummern-anbieter anzeigen
+						//console.log("Attribut "+ attribut_name + " ist " + typeof(zellen_wert) + ", "+ zellen_wert) // vl. noch Nummern-anbieter anzeigen
 					} else {
 						console.log(attribut_name + " ist KEIN String!")
 					}
@@ -469,6 +475,14 @@ function init() {
 					}
 				}
 			}
+
+			// Zufallswerte für fehlende Ortsangaben
+			if (proj1_start === ''){
+				var zu_fall = Math.random().toString(36).substring(7);
+				proj1_start= zu_fall
+			}
+			//console.log("proj1_start:  " + proj1_start)
+			
 			//proj1_fill-array für Füllung vorbereiten
 			proj1_fill.push(proj1_start + '_' + tagesdatum)
 			
@@ -479,12 +493,26 @@ function init() {
 		//Projektgebiet einsetzen
 			//letzten Wert aus projfill-array nehmen und 
 			// als Projektgebiet01 einiterieren, weil Auswahl durch longest_common_substr-Fu hier nicht griff...
+			// Eintrag weiter unten auch für Nutzer sichtbar ausgeben.
 			//console.log(proj1_fill)
 
+		var letzter_eintrag = proj1_fill[proj1_fill.length-1]
+		console.log("letzter Eintrag: " +letzter_eintrag);
+
 		for (var zeilen_nr in zellenobjekt){
-			zellenobjekt[zeilen_nr].projektgebiet01 = proj1_fill[proj1_fill.length-1]
+			zellenobjekt[zeilen_nr].projektgebiet01 = letzter_eintrag
 			//zellenobjekt[zeilen_nr].projektgebiet01 = longest_common_starting_substring(proj1_fill)
 		}
+
+
+		/*
+					if (proj1_start === ''){
+				var zu_fall = Math.random().toString(36).substring(7);
+				proj1_start = zu_fall
+				console.log("Zufallswert", zu_fall);
+			}
+			*/
+
 
 		//Matching: Spaltenumbenennungen: Koordinaten aus aktuellen mobilen Werten für X und Y, die zu xcoor_r und ycoor_r werden
 		//(xcoor_r->xcoor_OLD | x -> xcoor_r & ycoor_r->ycoor_OLD | y -> ycoor_r) 
@@ -514,6 +542,8 @@ function init() {
 				-->		....NACHCHECKEN, ob noch etwas verloren geht bzw, auf csv-tab zugreift!!!!
 			*/
 
+		console.log(zellenobjekt)
+
 		//durch unparse entstehen leider falsche Kommawerte in Hsnr / plz statt int 
 			//...  später manuell mit FaR ändern (.0)
 		var back_to_string = Papa.unparse(zellenobjekt)	
@@ -524,14 +554,13 @@ function init() {
 		//var pre_save = '5.05,1.0,6627226.0'
 		var pre_save = back_to_string.replace(/(\.0,)/g, ',')	// Achtung: Punkt escapen!
 		//console.log(pre_save)
-
-		
-		document.getElementById('info_div').innerHTML += "Speichere veränderte CSV-Datei..."
+	
+		document.getElementById('info_div').innerHTML += "<p>Speichere veränderte CSV-Datei...</p>"
 		save_as(pre_save, neuer_dateiname)
+
+		// Projektgebiet-Eintrag anzeigen
+		document.getElementById('info_div').innerHTML += "<p>Nach dem Upload ist der Datensatz über diesen Projektgebiet01-Eintrag filterbar :<h3><b> " + letzter_eintrag + " </b></h3> "
 	} // -------------------Ende Funktion process
-
-//Dresden_2019-11-4
-
 	
 
 	function save_as (content,fname){
@@ -548,7 +577,7 @@ function init() {
 
 
 	function display_features(input_features){
-		document.getElementById('info_div').innerHTML += 'Füge Standorte der Karte hinzu...'
+		document.getElementById('info_div').innerHTML += '<p>Füge Standorte der Karte hinzu...</p>'
 		//console.log(input_features)
 
 		//feature array
