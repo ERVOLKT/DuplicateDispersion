@@ -1,16 +1,34 @@
 //TO DO: 
 
 /*
-	- Leider im Fix der BRN = -1 - problematik ein Fehler aufgetaucht, der die Spalten im CSV  verschiebt ...
-	- Sonderzeichen z.B. im Namen gehen immer noch durch...
-	- addr_revgc_locked - Feld im master_geojson als "Adresse manuell" erstellen und im master_csv zurückbenennen
-
-	- Test mit komplett "vermurkstem" Datensatz wie aus ps-Tests für Umsatzberechnung, Spaltenauffüllungen, 
-		ReplaceFunktionen (ersetzt hoffentlich nur "innerhalb" des Werts, ncith die String-Anführungszeichen darum)
+	
 
 
-	- check auf null-Werte in den Spalten prim_sek / quelle_sek / erhebungszeitpunkt...
-		--> evtl. späterumstellen, dass Feldwerte intern nicht als strings gehandhabt werden mit dynamicTyping
+	- geht nciht (Alles bzw. das Meiste ist in Konsole richtig, leider nicht in csv!!!) 
+		Sonderzeichen gehen nur noch Zum Teil durch und zerschießen im schlimmsten Fall bzw. kombination das csv , nciht mehr hochladbar
+			_> Kommas (und weitere Sonderzeichen) NACH unparse (evtl. zusammen mit extra eingefügten quotecharacters löschen  !!!)
+
+		
+
+	- geht: 
+		Hausnummern, plz, manuelle_eingabe als integer statt real oder string garantieren
+		Leere mbu-spalten oder Wert -1 auf 0 setzen
+		Alle Felder mit -1 -> Null
+		Standort-ID 0/1/leer -> -1
+		bestimme hwg aus brn
+		primär / sekundär leer -> 'Primär'
+		Sekundärquelle leer -> 'keine Sekundärdaten'
+		Leistungsfähigkeit leer -> Leistungsfühigkeit = 3
+		Proj1 auffüllen
+		erhebungszeitpunkt auffüllen
+		Umsatzberechnung
+		Fehlende Spalten anlegen
+	
+	- addr_revgc_locked - Feld im MASTER-GEOJSON als "manuelle eingabe" erstellen und im master_csv addr_revgc_locked zurückbenennen
+	- sonstige manuelle Adressfelder anlegen, MASTER_CSV UND MASTER_GEOJSON
+
+
+	(--> evtl. späterumstellen, dass Feldwerte intern nicht als strings gehandhabt werden mit dynamicTyping)
 
 */
 
@@ -32,7 +50,8 @@ function init() {
 	var infoLabel = document.createElement('span');
     infoLabel.className = 'info-label';
     infoLabel.textContent = 'i';
-	//-----------------map
+
+	//-----------------Open Layers Map erstellen
     var map = new ol.Map({
 	    target: 'map',
 	    layers: [
@@ -73,11 +92,6 @@ function init() {
 	        center: [1174072.754460, 6574807.424978],
 	        zoom: 6.5
 	    })
-	    /*,
-	    logo: {
-	        src: '../../res/university_of_pecs.png',
-	        href: 'http://www.ttk.pte.hu/en'
-	    }*/
 	});
 
 	function upload(evt) {
@@ -107,11 +121,11 @@ function init() {
 
 			//console.log(tab_daten);
 			console.log("Csv hat "+tab_daten.data.length + " Zeilen. Das Trennzeichen ist ein: '"+ tab_daten.meta.delimiter + "'. Die Spalten heißen: "+ tab_daten.meta.fields + ".")
-			//return tab_daten; //???????? wie bringe ich die Daten nach Draußen in eine andere Funktion? 
+			//return tab_daten; 
 			
 
-			// Openlayers-Layer erstellen und zoomen
 			
+			// Hauptfunktion aufrufen
 			process(tab_daten, new_filename)	// --> Neue 2.Fu innerhalb dieser aufrufen, die auf gleicher Ebene existiert
 		};
 		reader.onerror = function() {
@@ -162,7 +176,7 @@ function init() {
 
 		//check auf Spalten: muss_spalten-Array gibt die zu suchenden Spalten vor. 
 			//Die Differenz wird in array fehlende_spalten gepusht und automatisch darüber angelegt.
-		var muss_spalten = ["ctriso", "name", "prim_sek","quelle_sek","brn","bt","hwg","vk_gesamt","lage","erhebungszeitpunkt","standort_id","leistungsfaehigkeit","mbu_10","mbu_20","mbu_30","mbu_31","mbu_32","mbu_33","mbu_40","mbu_41","mbu_42_43","mbu_44","mbu_50","mbu_51_52_53","mbu_54","mbu_57_58","mbu_59","mbu_60","mbu_61","mbu_62","mbu_63","mbu_65","mbu_70","mbu_71","mbu_72","mbu_73","mbu_74","mbu_76","mbu_77","mbu_801","mbu_802","mbu_803","mbu_81","mbu_82","mbu_83_84","mbu_85","mbu_86","mbu_87", "X", "Y", "xcoor_r","ycoor_r","changed","pictureFolder","pictureName","picturePath","created","altitude","accuracy", "vollerheb_teilsort", "plz", "stadt", "stt", "str", "hsnr" , "hsz", "flaech_leist", "umsatz_mio_brutto", "baumarkt_vk_innen", "umsatz_mio_brutto", "baumarkt_vk_dach_freifl", "baumarkt_vk_freifl", "erheber_prim", "fil", "bemerkungen" , "projektgebiet01", "adresse_manuell"]
+		var muss_spalten = ["ctriso", "name", "prim_sek","quelle_sek","brn","bt","hwg","vk_gesamt","lage","erhebungszeitpunkt","standort_id","leistungsfaehigkeit","mbu_10","mbu_20","mbu_30","mbu_31","mbu_32","mbu_33","mbu_40","mbu_41","mbu_42_43","mbu_44","mbu_50","mbu_51_52_53","mbu_54","mbu_57_58","mbu_59","mbu_60","mbu_61","mbu_62","mbu_63","mbu_65","mbu_70","mbu_71","mbu_72","mbu_73","mbu_74","mbu_76","mbu_77","mbu_801","mbu_802","mbu_803","mbu_81","mbu_82","mbu_83_84","mbu_85","mbu_86","mbu_87", "X", "Y", "xcoor_r","ycoor_r","changed","pictureFolder","pictureName","picturePath","created","altitude","accuracy", "vollerheb_teilsort", "plz", "stadt", "stt", "str", "hsnr" , "hsz", "flaech_leist", "umsatz_mio_brutto", "baumarkt_vk_innen", "umsatz_mio_brutto", "baumarkt_vk_dach_freifl", "baumarkt_vk_freifl", "erheber_prim", "fil", "bemerkungen" , "projektgebiet01", "manuelle_eingabe"]
 		//"addr_revgc_locked"
 		var fehlende_spalten = []
 		
@@ -237,12 +251,9 @@ function init() {
 
 		
 		//console.log(zellenobjekt[0])
-		
+			
 
-
-		
-
-	// --------------Attribute-Check:  
+	// --------------Attribute-Check:-----------------------------------------------------------------------------------------------------------------------------------------  
 
 		var ort_proj1 = []
 		var stadtteil_proj1 = []
@@ -254,27 +265,26 @@ function init() {
 			//spalte_standort_id = zellenobjekt[zeilen_nr].standort_id
 			//console.log(spalte_standort_id);
 			
-			// ----------Riesenschleife, die durch alle Zellen iteriert:
+			// ----------Riesenschleife, die durch alle Zellen iteriert:------------------------------------------------------------------------
 			for (var attribut_name in zellenobjekt[zeilen_nr]){
 
-
+				// LEse-Syntax für einzelne Zellen:
 				var zellen_wert = zellenobjekt[zeilen_nr][attribut_name]
-				//console.log(zellen_wert);
+				// aber SCHREIBEN geht mit DIESER SYNTAX, sonst läuft es ins Leere!!!!!!!!!!!!!!!:
+					// zellenobjekt[zeilen_nr].Attributname = 'veränderter Wert'
 
-				// Alle  Spalten jeder Zeile  -1 -> 0 ersetzen, AUßER bei Standort-ID > (muss vor den Stadnort-ID-Änderungen stehen [hier ins else gepackt]...) 
+				// ALLE SPALTEN JEDER ZEILE  -1 -> null ersetzen, AUßER bei Standort-ID > (muss vor den Stadnort-ID-Änderungen stehen [hier ins else gepackt]...) 
 				if (attribut_name !== 'standort_id'){	
 					if (zellen_wert === '-1'){
 						console.log("Wert -1 bei Objekt-Nummer "+ zeilen_nr + " (Name: '" + zellenobjekt[zeilen_nr].name+ "')  ,  Spalte [" + attribut_name + "] entdeckt. Wird auf 0 gesetzt")
-						zellen_wert = '0';
+						zellenobjekt[zeilen_nr][attribut_name] = '';
 						console.log("Neuer Wert für "+zellenobjekt[zeilen_nr].name+ "[" +attribut_name+ "]: "+zellen_wert)
-					}else {
-						//console.log(attribut_name)
-					}
+					}else {}
 				} else {	//Standort_ID 0 oder leer -> Standort_ID 1 / Standort-ID 1 -> -1				
 					//console.log("Attributname ist Standort-ID.: "+ attribut_name)
 					if (zellen_wert === '' || zellen_wert === '0' || zellen_wert === '1'){
 						console.log("standort-id bei Betrieb '"+ zellenobjekt[zeilen_nr].name +"'(Name) ist 0, 1 oder leer: "+zellen_wert+ ". Wird auf -1 gesetzt:")
-						zellen_wert = '-1'
+						zellenobjekt[zeilen_nr].standort_id = '-1'
 						console.log("Standort-ID ist jetzt: "+ zellen_wert)
 					}
 				}
@@ -343,8 +353,8 @@ function init() {
 				//Sekundärquelle leer -> 'keine Sekundärdaten'
 				if (attribut_name === 'quelle_sek'){	
 					if (zellen_wert === ''){
-						zellenobjekt[zeilen_nr].prim_sek = 'keine Sekundärdaten'
-						console.log("Spalte quelle_sek war leer und wurde durch '"+ zellenobjekt[zeilen_nr].prim_sek + "' ersetzt.")
+						zellenobjekt[zeilen_nr].quelle_sek = 'keine Sekundärdaten'
+						console.log("Spalte quelle_sek war leer und wurde durch '"+ zellenobjekt[zeilen_nr].quelle_sek + "' ersetzt.")
 					}
 				}
 				//Erhebungszeitpunkt leer -> Kopie des Eintrags von Mapit-Systemspalte "created", allerdings nur Zeichen 1-10, ohne uhrzeit
@@ -354,21 +364,20 @@ function init() {
 						console.log("Spalte erhebungszeitpunkt war leer und wurde durch '"+ zellenobjekt[zeilen_nr].erhebungszeitpunkt + "' ersetzt.")
 					}
 				}
-				//Leistungsfähigkeit leer -> Kopie des Eintrags von Mapit-Systemspalte "created", allerdings nur Zeichen 1-10, ohne uhrzeit
-				/*if (attribut_name === 'leistungsfaehigkeit'){
-				console.log(leistungsfaehigkeit)	
+				//Leistungsfähigkeit leer -> Leistungsfühigkeit = 3
+				if (attribut_name === 'leistungsfaehigkeit'){
+				//console.log(leistungsfaehigkeit)	
 					if (zellen_wert === ''){
 						zellenobjekt[zeilen_nr].leistungsfaehigkeit = 3
 						console.log("Spalte leistungsfaehigkeit war leer und wurde durch '"+ zellenobjekt[zeilen_nr].leistungsfaehigkeit + "' ersetzt.")
 					}
-				}*/
+				}
 
-				//Hausnummern, plz, addr_revgc_locked als integer statt real oder string garantieren
-					// in Konsole richtig, leider nciht in csv!!!
-				if (attribut_name === 'hsnr' || attribut_name === 'plz' || attribut_name === 'addr_revgc_locked'){	
+				// INT-Garantie : Hausnummern, plz [...] als integer statt real oder string garantieren
+				if (attribut_name === 'hsnr' || attribut_name === 'plz' ){					// || attribut_name === 'manuelle_eingabe'
 					if (typeof(zellen_wert) === 'string'){
 						//console.log("ist string")
-						zellen_wert = parseInt(zellen_wert,10)
+						zellenobjekt[zeilen_nr][attribut_name] = parseInt(zellen_wert,10)
 						//console.log("Attribut "+ attribut_name + " ist " + typeof(zellen_wert) + ", "+ zellen_wert) // vl. noch Nummern-anbieter anzeigen
 					} else {
 						console.log(attribut_name + " ist KEIN String!")
@@ -379,16 +388,27 @@ function init() {
 				if (attribut_name.includes('mbu_')){	
 					//console.log(typeof(zellen_wert) + "- Type mbu-spalte gefunden. ")
 					if (zellen_wert === '-1' || zellen_wert === ''){
-						console.log("MBU-Wert war [" + zellen_wert + "].")
-						zellen_wert = '0'	
-						console.log("MBU_wert wurde auf" +zellen_wert+ "gesetzt."	 )
+						console.log("MBU-Wert war [" + zellenobjekt[zeilen_nr][attribut_name] + "].")
+						zellenobjekt[zeilen_nr][attribut_name] = '0'	
+						console.log("MBU_wert wurde auf [" + zellenobjekt[zeilen_nr][attribut_name] + "] gesetzt."	 )
 					}
 				}
 
-				// Sonderzeichen, insb. , / \ ? : ; in Namens- und Bemerkungsspalte ersetzen
+				// Sonderzeichen, insb. , / \ ? : ; in Namens- und Bemerkungsspalte ersetzen, CAVE SYNTAX
 				//ersetzt hoffentlich nur "innerhalb" des Werts, ncith die String-Anführungszeichen darum
+				// -> zum Glück radiert die Erfassungs-App selbst schon ungewollte Anführungszeichen aus...
+				//	--> PapaParse automatismus:
+						//--> Anführungszeichen innerhalb Zelle werden als doppelte AnfZeichen gesetzt (eigentlich richtig, nur xcel und webgis lesen das falsch(?))
+						//--> gesamter Zellinhalt im Fall von Sonderzeichen wird auch in doppelte AnfZeichen gesetzt: 
+						// --> Z1[Treff ,:;"„'`´ 3000] -> ["Treff ,:;""„'`´ 3000"]
+									//--> Excel macht daraus ( mit , als sep und " als quote) [Treff ,:] und schneidet danach die Zeile ab!
+						//--> im Fall von z999[/  \ ;: ?] wird aber nix in Anfzeichen gesetzt... -> [/  \ ;: ?] 
+									// -> Excel macht daraus (mit , als sep und " als quote) [/  \ ] und schneidet danach die Zeile ab!
 				if (attribut_name === 'name' || attribut_name === 'bemerkungen' || attribut_name === 'zentr_versorgbereich'){
-					zellen_wert.replace(/[,:;"„'`´?!#-/\\]/g, '_')	
+					//richtige Syntax für Ersetzung -- MIT führendem "zellen_wert ="  , nur "zellen_wert.replace(" führt zu nichts....
+					//console.log("Bei Zeile "+ zeilen_nr + " Vorher: " + zellen_wert)
+					zellenobjekt[zeilen_nr][attribut_name] = zellen_wert.replace(/[,:;"„'`´/\\]/g, '_')		//mittlere Ersetzung; minimal: (/[,:;„`´/\\]/g, '_') maximal: (/[,:;"„'`´?!#-/\\]/g, '_')
+					//console.log("Bei Zeile "+ zeilen_nr + " Nachher: " + zellen_wert)
 				}
 
 				//Stadt-Einträge für Projektgebiet im ort_proj1-array sammeln:
@@ -532,32 +552,28 @@ function init() {
 		}	//geht .. nicht wundern, mobile Erfassung liefert nur zwei Nachkomma-Stellen, Server jedoch mehr...
 
 
-		//Anführungszeichen müssen nicht wie bei Powershell gelöscht werden
-
-
-		// Daten zurückverwandeln
-			/* ...geändert auf zellenobjekt statt csv_tab als input, 
-				--> + neue Spalte wird mit in csv übernommen, bei csv-tab nicht (dort wird xcoor_r geleert und keine neue Spalte entsteht)
-				--> - ich könnte  Änderungen verlieren, die sich auf csv_tab und nicht auf zellenobbjekt bezogen wie z.B. die 3 neu angelegten Baumarkt-Spalten (fixed)
-				-->		....NACHCHECKEN, ob noch etwas verloren geht bzw, auf csv-tab zugreift!!!!
-			*/
-
-		console.log(zellenobjekt)
+		//console.log(zellenobjekt)
 
 		//durch unparse entstehen leider falsche Kommawerte in Hsnr / plz statt int 
-			//...  später manuell mit FaR ändern (.0)
-		var back_to_string = Papa.unparse(zellenobjekt)	
+			//...  später manuell mit FaR ändern (.0) falls es nciht schon weiter oben mit INT-Garantie abgefangen wurde
+		var back_to_string = Papa.unparse(zellenobjekt
+		/*, 
+			{
+				quotes: true, 
+				quoteChar: '"',
+				delimiter: ','
+			}
+		*/
+		)	
 
-		//im unparse-Ergebnis "back_to_string" alle hoffentlich falschen double-Werte (Hsnr etc) ersetzen 
-			// ... als pre_save speichern und speichern
-		//	.replace(/(.0\D)/g, '')
-		//var pre_save = '5.05,1.0,6627226.0'
-		var pre_save = back_to_string.replace(/(\.0,)/g, ',')	// Achtung: Punkt escapen!
-		//console.log(pre_save)
-	
 		document.getElementById('info_div').innerHTML += "<p>Speichere veränderte CSV-Datei...</p>"
-		save_as(pre_save, neuer_dateiname)
 
+		//Falls das INT-Garantieren weiter oben nicht funktioniert, muss man wieder über diesen Weg im unparse-Ergebnis "back_to_string" alle hoffentlich falschen double-Werte (Hsnr etc) ersetzen 
+			// ... als pre_save speichern und weitergeben
+		//var pre_save = back_to_string.replace(/(\.0,)/g, ',')	// Achtung: Punkt escapen! + Syntax  "variable = string.replace(" , s.o. bei Sonderzeichen
+		//save_as(pre_save, neuer_dateiname)	// statt save_as(back_to_string, neuer_dateiname)	
+	
+		save_as(back_to_string, neuer_dateiname)
 		// Projektgebiet-Eintrag anzeigen
 		document.getElementById('info_div').innerHTML += "<p>Nach dem Upload ist der Datensatz über diesen Projektgebiet01-Eintrag filterbar :<h3><b> " + letzter_eintrag + " </b></h3> "
 	} // -------------------Ende Funktion process
