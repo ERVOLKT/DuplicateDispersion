@@ -341,7 +341,7 @@ layerTree.prototype.addVectorLayer = function (form) {
         "properties":{
             "name":"False_Dummy",
             "standort_id":0,
-            "addr_revgc_locked": 0,
+            "manuelle_adresse": 0,  
             "plz":0,"stadt":"",
             "stadtbezirk":"",
             "stt":"","str":"",
