@@ -1,36 +1,3 @@
-//TO DO: 
-
-/*
-	
-
-
-	- geht nciht (Alles bzw. das Meiste ist in Konsole richtig, leider nicht in csv!!!) 
-		Sonderzeichen gehen nur noch Zum Teil durch und zerschießen im schlimmsten Fall bzw. kombination das csv , nciht mehr hochladbar
-			_> Kommas (und weitere Sonderzeichen) NACH unparse (evtl. zusammen mit extra eingefügten quotecharacters löschen  !!!)
-
-		
-
-	- geht: 
-		Hausnummern, plz, manuelle_eingabe als integer statt real oder string garantieren
-		Leere mbu-spalten oder Wert -1 auf 0 setzen
-		Alle Felder mit -1 -> Null
-		Standort-ID 0/1/leer -> -1
-		bestimme hwg aus brn
-		primär / sekundär leer -> 'Primär'
-		Sekundärquelle leer -> 'keine Sekundärdaten'
-		Leistungsfähigkeit leer -> Leistungsfühigkeit = 3
-		Proj1 auffüllen
-		erhebungszeitpunkt auffüllen
-		Umsatzberechnung
-		Fehlende Spalten anlegen
-	
-	- sonstige manuelle Adressfelder anlegen, MASTER_CSV UND MASTER_GEOJSON
-
-
-	(--> evtl. späterumstellen, dass Feldwerte intern nicht als strings gehandhabt werden mit dynamicTyping)
-
-*/
-
 
 function init() {
 
