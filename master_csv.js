@@ -24,7 +24,6 @@
 		Umsatzberechnung
 		Fehlende Spalten anlegen
 	
-	- addr_revgc_locked - Feld im MASTER-GEOJSON als "manuelle eingabe" erstellen und im master_csv addr_revgc_locked zurückbenennen
 	- sonstige manuelle Adressfelder anlegen, MASTER_CSV UND MASTER_GEOJSON
 
 
@@ -132,8 +131,6 @@ function init() {
 			document.getElementById('info_div').innerHTML += ('<p> Kann die Datei nicht lesen: ' + file.fileName + ' </p>');
 		};
 
-//7m3tns_2019-11-5
-
 	} // ----------------------------------------------------- Ende Funktion upload
 
 	//Haupt-fu process----------------------------------------------------------
@@ -176,8 +173,8 @@ function init() {
 
 		//check auf Spalten: muss_spalten-Array gibt die zu suchenden Spalten vor. 
 			//Die Differenz wird in array fehlende_spalten gepusht und automatisch darüber angelegt.
-		var muss_spalten = ["ctriso", "name", "prim_sek","quelle_sek","brn","bt","hwg","vk_gesamt","lage","erhebungszeitpunkt","standort_id","leistungsfaehigkeit","mbu_10","mbu_20","mbu_30","mbu_31","mbu_32","mbu_33","mbu_40","mbu_41","mbu_42_43","mbu_44","mbu_50","mbu_51_52_53","mbu_54","mbu_57_58","mbu_59","mbu_60","mbu_61","mbu_62","mbu_63","mbu_65","mbu_70","mbu_71","mbu_72","mbu_73","mbu_74","mbu_76","mbu_77","mbu_801","mbu_802","mbu_803","mbu_81","mbu_82","mbu_83_84","mbu_85","mbu_86","mbu_87", "X", "Y", "xcoor_r","ycoor_r","changed","pictureFolder","pictureName","picturePath","created","altitude","accuracy", "vollerheb_teilsort", "plz", "stadt", "stt", "str", "hsnr" , "hsz", "flaech_leist", "umsatz_mio_brutto", "baumarkt_vk_innen", "umsatz_mio_brutto", "baumarkt_vk_dach_freifl", "baumarkt_vk_freifl", "erheber_prim", "fil", "bemerkungen" , "projektgebiet01", "manuelle_eingabe"]
-		//"addr_revgc_locked"
+		var muss_spalten = ["ctriso", "name", "prim_sek","quelle_sek","brn","bt","hwg","vk_gesamt","lage","erhebungszeitpunkt","standort_id","leistungsfaehigkeit","mbu_10","mbu_20","mbu_30","mbu_31","mbu_32","mbu_33","mbu_40","mbu_41","mbu_42_43","mbu_44","mbu_50","mbu_51_52_53","mbu_54","mbu_57_58","mbu_59","mbu_60","mbu_61","mbu_62","mbu_63","mbu_65","mbu_70","mbu_71","mbu_72","mbu_73","mbu_74","mbu_76","mbu_77","mbu_801","mbu_802","mbu_803","mbu_81","mbu_82","mbu_83_84","mbu_85","mbu_86","mbu_87", "X", "Y", "xcoor_r","ycoor_r","changed","pictureFolder","pictureName","picturePath","created","altitude","accuracy", "vollerheb_teilsort", "plz", "stadt", "stt", "str", "hsnr" , "hsz", "flaech_leist", "umsatz_mio_brutto", "baumarkt_vk_innen", "umsatz_mio_brutto", "baumarkt_vk_dach_freifl", "baumarkt_vk_freifl", "erheber_prim", "fil", "bemerkungen" , "projektgebiet01", "manuelle_adresse", "addr_revgc_locked"]
+		
 		var fehlende_spalten = []
 		
 		//console.log(zellenobjekt[0])
@@ -230,6 +227,18 @@ function init() {
 		} else{
 			console.log("vk_gesamt oder flaech_leist oder beide waren nciht in 1. Zeile vorhanden")
 		} 
+
+		// Einträge aus manuelle_adresse in addr_revgc_locked kopieren
+		if(('addr_revgc_locked', 'manuelle_adresse') in zellenobjekt[0]){		
+			//console.log('Felder addr_revgc_locked und manuelle_adresse vorhanden')
+			for (var zeilen_no in zellenobjekt){
+				zellenobjekt[zeilen_no].addr_revgc_locked = zellenobjekt[zeilen_no].manuelle_adresse
+				//console.log(flächenleistung);
+				}
+		} else{
+			console.log("!!Felder addr_revgc_locked oder manuelle_adresse oder beide waren nciht (in 1. Zeile) vorhanden!!!")
+		} 
+
 	
 		/*	
 		//...hatte zum Spalten-Einfügen funktioniert,
@@ -373,8 +382,8 @@ function init() {
 					}
 				}
 
-				// INT-Garantie : Hausnummern, plz [...] als integer statt real oder string garantieren
-				if (attribut_name === 'hsnr' || attribut_name === 'plz' ){					// || attribut_name === 'manuelle_eingabe'
+				// INT-Garantie : Hausnummern, plz [...] und ReverseGeocoding-Feinjustierungsfeld als integer statt real oder string garantieren
+				if (attribut_name === 'hsnr' || attribut_name === 'plz' || attribut_name === 'addr_revgc_locked' ){					// || attribut_adresse === 'manuelle_eingabe'
 					if (typeof(zellen_wert) === 'string'){
 						//console.log("ist string")
 						zellenobjekt[zeilen_nr][attribut_name] = parseInt(zellen_wert,10)
