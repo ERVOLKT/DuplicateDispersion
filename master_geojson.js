@@ -319,7 +319,7 @@ layerTree.prototype.addVectorLayer = function (form) {
                 // Merke dir die Verschiebungs-X-Werte...wenn es schon einmal dieser neue Wert avisiert wurde, dann füge noch +1 hinzu
                 while (dispersion_history.includes(dispersion)){                         
                     //console.log("1a.value " +dispersion+ " already in dispersion-array")
-                    dispersion = dispersion +1.0
+                    dispersion = dispersion +2.5
                     //console.log("1b.increased x-value for  "+ xxxx +": " +dispersion)
                 }
                 geojson_json.features[xxxx].geometry.coordinates[0][0] = dispersion;
