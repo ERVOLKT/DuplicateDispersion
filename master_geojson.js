@@ -347,7 +347,7 @@ layerTree.prototype.addVectorLayer = function (form) {
             "vk_gesamt":0,
             "bt":0,
             "fil":0,
-            "leistungsfaehigkeit":"",
+            "leistungsfaehigkeit":0,
             "flaech_leist":0,
             "umsatz_gesch":0.0,
             "umsatz_mio_brutto":0.0,
