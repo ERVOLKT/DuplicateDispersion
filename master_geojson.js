@@ -339,6 +339,7 @@ layerTree.prototype.addVectorLayer = function (form) {
         {"type":"Feature",
         "geometry":{"type":"MultiPoint","coordinates":[[1178606.24072,6010867.34820]]},
         "properties":{
+            "Geprüft":0,
             "name":"False_Dummy",
             "standort_id":0,
             "stadtbezirk":"",
