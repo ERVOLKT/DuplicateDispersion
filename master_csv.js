@@ -266,8 +266,23 @@ function init() {
 				}
 
 				// bestimme hwg aus brn
+				// und 0 ausschließen wg. dropdown-domain
 				if (attribut_name === 'brn'){	// brn kommt als string an - ich setze hwg trotzdem sicherheitshalber als int
-					if (zellen_wert >= 10 && zellen_wert < 20){
+					if (zellen_wert == 0 ){
+						//console.log(typeof(zellen_wert) +": "+ zellen_wert)
+						console.log("habe EH 0 in brn. Erstelle HWG null")
+						//console.log("hwg ist vorher Datentyp: "+ typeof(zellenobjekt[zeilen_nr].hwg))
+						zellenobjekt[zeilen_nr].hwg = null
+						//console.log(zellenobjekt[zeilen_nr].hwg + "(" +typeof(zellenobjekt[zeilen_nr].hwg)+ ")")
+					} 
+					else if (zellen_wert > 0 && zellen_wert < 10){
+						//console.log(typeof(zellen_wert) +": "+ zellen_wert)
+						console.log("habe EH 1-9 in brn. Erstelle HWG null")
+						//console.log("hwg ist vorher Datentyp: "+ typeof(zellenobjekt[zeilen_nr].hwg))
+						zellenobjekt[zeilen_nr].hwg = null
+						//console.log(zellenobjekt[zeilen_nr].hwg + "(" +typeof(zellenobjekt[zeilen_nr].hwg)+ ")")
+					} 
+					else if (zellen_wert >= 10 && zellen_wert < 20){
 						//console.log(typeof(zellen_wert) +": "+ zellen_wert)
 						//console.log("habe EH in brn. Erstelle HWG 10")
 						//console.log("hwg ist vorher Datentyp: "+ typeof(zellenobjekt[zeilen_nr].hwg))
@@ -310,8 +325,16 @@ function init() {
 						zellenobjekt[zeilen_nr].hwg = 803
 						//console.log("habe "+zellen_wert+" in brn. Erstelle HWG 803")
 					}
+					else if (zellen_wert >= 88 && zellen_wert < 90 ){
+						zellenobjekt[zeilen_nr].hwg = null
+						//console.log("habe "+zellen_wert+" in brn. Erstelle HWG 99")
+					}
 					else if (zellen_wert >= 90 && zellen_wert < 100 ){
 						zellenobjekt[zeilen_nr].hwg = 99
+						//console.log("habe "+zellen_wert+" in brn. Erstelle HWG 99")
+					}
+					else if (zellen_wert >= 100 && zellen_wert < 801 ){
+						zellenobjekt[zeilen_nr].hwg = null
 						//console.log("habe "+zellen_wert+" in brn. Erstelle HWG 99")
 					}
 					else {
@@ -319,27 +342,47 @@ function init() {
 					}
 				}
 
-				//primär / sekundär leer -> 'Primär'
+				// leeres Erheberfeld füllen
+				if (attribut_name === 'erheber_prim'){	
+					if (zellen_wert == '' ){
+						//console.log(typeof(zellen_wert) +": "+ zellen_wert)
+						console.log("erheber_prim war leer. Setze GMA")
+						//console.log("hwg ist vorher Datentyp: "+ typeof(zellenobjekt[zeilen_nr].hwg))
+						zellenobjekt[zeilen_nr].erheber_prim = 'GMA_GIS'
+						//console.log(zellenobjekt[zeilen_nr].hwg + "(" +typeof(zellenobjekt[zeilen_nr].hwg)+ ")")
+					} 
+				}
+
+				//fil 0 ausschließen wg. dropdown-domain
+				if (attribut_name === 'fil'){	// brn kommt als string an - ich setze hwg trotzdem sicherheitshalber als int
+					if (zellen_wert == 0 ){
+						//console.log(typeof(zellen_wert) +": "+ zellen_wert)
+						console.log("habe  0 in fil. Erstelle fil null")
+						//console.log("fil ist vorher Datentyp: "+ typeof(zellenobjekt[zeilen_nr].fil))
+						zellenobjekt[zeilen_nr].fil = null
+						//console.log(zellenobjekt[zeilen_nr].fil + "(" +typeof(zellenobjekt[zeilen_nr].fil)+ ")")
+					} 
+					else {
+						console.log("!!!!!!!!FIL hat unvorhergesehenen Wert: "+zellen_wert)
+					}
+				}
+
+				//primär / sekundär WIRD JETZT IMMER AUF 'Primär' GESETZT
 				if (attribut_name === 'prim_sek'){	
-					if (zellen_wert === ''){
-						zellenobjekt[zeilen_nr].prim_sek = 'primär'
-						console.log("Spalte prim_sek war leer und wurde durch '"+ zellenobjekt[zeilen_nr].prim_sek + "' ersetzt.")
-					}
+					zellenobjekt[zeilen_nr].prim_sek = 'primär'
+					//console.log("Spalte prim_sek  wurde auf '"+ zellenobjekt[zeilen_nr].prim_sek + "' gesetzt.")
 				} 
-				//Sekundärquelle leer -> 'keine Sekundärdaten'
+				//Sekundärquelle WIRD JETZT IMMER AUF  'keine Sekundärdaten' GESETZT
 				if (attribut_name === 'quelle_sek'){	
-					if (zellen_wert === ''){
-						zellenobjekt[zeilen_nr].quelle_sek = 'keine Sekundärdaten'
-						console.log("Spalte quelle_sek war leer und wurde durch '"+ zellenobjekt[zeilen_nr].quelle_sek + "' ersetzt.")
-					}
+					zellenobjekt[zeilen_nr].quelle_sek = 'keine Sekundärdaten'
+					//console.log("Spalte quelle_sek war leer und wurde auf '"+ zellenobjekt[zeilen_nr].quelle_sek + "' gesetzt.")	
 				}
-				//Erhebungszeitpunkt leer -> Kopie des Eintrags von Mapit-Systemspalte "created", allerdings nur Zeichen 1-10, ohne uhrzeit
+				//Erhebungszeitpunkt WIRD JETZT IMMER AKTUELL GESETZT -> Kopie des Eintrags von Mapit-Systemspalte "created", allerdings nur Zeichen 1-10, ohne uhrzeit
 				if (attribut_name === 'erhebungszeitpunkt'){	
-					if (zellen_wert === ''){
-						zellenobjekt[zeilen_nr].erhebungszeitpunkt = zellenobjekt[zeilen_nr].created.substring(0, 10);
-						console.log("Spalte erhebungszeitpunkt war leer und wurde durch '"+ zellenobjekt[zeilen_nr].erhebungszeitpunkt + "' ersetzt.")
-					}
+					zellenobjekt[zeilen_nr].erhebungszeitpunkt = zellenobjekt[zeilen_nr].created.substring(0, 10);
+					//console.log("Spalte erhebungszeitpunkt wurde auf aktuelles Datum, '"+ zellenobjekt[zeilen_nr].erhebungszeitpunkt + "' ersetzt.")	
 				}
+
 				//Leistungsfähigkeit leer -> Leistungsfühigkeit = 3
 				if (attribut_name === 'leistungsfaehigkeit'){
 				//console.log(leistungsfaehigkeit)	
