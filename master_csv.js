@@ -353,13 +353,13 @@ function init() {
 					} 
 				}
 
-				//fil 0 ausschließen wg. dropdown-domain
+				//fil 0 ausschließen wg. dropdown-domain - > wird jetzt standardmäßig 1 gesetzt...
 				if (attribut_name === 'fil'){	// brn kommt als string an - ich setze hwg trotzdem sicherheitshalber als int
 					if (zellen_wert == 0 ){
 						//console.log(typeof(zellen_wert) +": "+ zellen_wert)
 						console.log("habe  0 in fil. Erstelle fil null")
 						//console.log("fil ist vorher Datentyp: "+ typeof(zellenobjekt[zeilen_nr].fil))
-						zellenobjekt[zeilen_nr].fil = null
+						zellenobjekt[zeilen_nr].fil = 1
 						//console.log(zellenobjekt[zeilen_nr].fil + "(" +typeof(zellenobjekt[zeilen_nr].fil)+ ")")
 					} 
 					else {
