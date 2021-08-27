@@ -370,13 +370,20 @@ function init() {
 				}
         
         if (attribut_name === 'lage'){	
-					if (zellen_wert == 0 ){
+					if (zellen_wert == 0 ){//gilt auch für NULL
 						//console.log(typeof(zellen_wert) +": "+ zellen_wert)
-						console.log("habe  0 in lage Erstelle Lage null")
+						console.log("habe  0 oder NULL in Lage Erstelle Lage 1")
 						//console.log("lage ist vorher Datentyp: "+ typeof(zellenobjekt[zeilen_nr].lage))
 						zellenobjekt[zeilen_nr].lage = 1
 						//console.log(zellenobjekt[zeilen_nr].lage + "(" +typeof(zellenobjekt[zeilen_nr].lage)+ ")")
-					} 
+					}
+          else if (zellen_wert >= 5){
+            console.log("habe  5 oder größer in Lage Erstelle Lage 1")
+            zellenobjekt[zeilen_nr].lage = 1
+          }
+          else {
+						console.log("!!!!!!!!BRN hat unvorhergesehenen Wert: "+zellen_wert)
+					}
 				}
 
 				//primär / sekundär WIRD JETZT IMMER AUF 'Primär' GESETZT
