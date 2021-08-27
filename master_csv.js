@@ -368,7 +368,7 @@ function init() {
 					}
           */
 				}
-        
+        // Lage abfangen
         if (attribut_name === 'lage'){	
 					if (zellen_wert == 0 ){//gilt auch für NULL
 						//console.log(typeof(zellen_wert) +": "+ zellen_wert)
@@ -382,10 +382,45 @@ function init() {
             zellenobjekt[zeilen_nr].lage = 1
           }
           else {
-						console.log("!!!!!!!!BRN hat unvorhergesehenen Wert: "+zellen_wert)
+						console.log("!!!!!!!!Lage hat unvorhergesehenen Wert: "+zellen_wert)
 					}
 				}
-
+        // leistungsfaehigkeit abfangen
+        if (attribut_name === 'leistungsfaehigkeit'){	
+					if (zellen_wert == 0 ){//gilt auch für NULL
+						//console.log(typeof(zellen_wert) +": "+ zellen_wert)
+						console.log("habe  0 oder NULL in leistungsfaehigkeit Erstelle leistungsfaehigkeit 3")
+						//console.log("leistungsfaehigkeit ist vorher Datentyp: "+ typeof(zellenobjekt[zeilen_nr].leistungsfaehigkeit))
+						zellenobjekt[zeilen_nr].leistungsfaehigkeit = 3
+						//console.log(zellenobjekt[zeilen_nr].leistungsfaehigkeit + "(" +typeof(zellenobjekt[zeilen_nr].leistungsfaehigkeit)+ ")")
+					}
+          else if (zellen_wert >= 6){
+            console.log("habe  5 oder größer in Lage Erstelle leistungsfaehigkeit 3")
+            zellenobjekt[zeilen_nr].leistungsfaehigkeit = 3
+          }
+          else {
+						console.log("!!!!!!!!leistungsfaehigkeit hat unvorhergesehenen Wert: "+zellen_wert)
+					}
+				}
+        
+        // bt abfangen
+        if (attribut_name === 'bt'){	
+					if (zellen_wert == 0 ){//gilt auch für NULL
+						//console.log(typeof(zellen_wert) +": "+ zellen_wert)
+						console.log("habe bt 0 oder NULL in bt Erstelle bt 3")
+						//console.log("bt ist vorher Datentyp: "+ typeof(zellenobjekt[zeilen_nr].bt))
+						zellenobjekt[zeilen_nr].bt = 3
+						//console.log(zellenobjekt[zeilen_nr].bt + "(" +typeof(zellenobjekt[zeilen_nr].bt)+ ")")
+					}
+          else if (zellen_wert >= 6){
+            console.log("habe bt 6 oder größer in bt Erstelle bt 2")
+            zellenobjekt[zeilen_nr].bt = 2
+          }
+          else {
+						console.log("!!!!!!!!bt hat unvorhergesehenen Wert: "+zellen_wert)
+					}
+				}
+        
 				//primär / sekundär WIRD JETZT IMMER AUF 'Primär' GESETZT
 				if (attribut_name === 'prim_sek'){	
 					zellenobjekt[zeilen_nr].prim_sek = 'primär'
