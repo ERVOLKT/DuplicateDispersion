@@ -354,17 +354,29 @@ function init() {
 				}
 
 				//fil 0 ausschließen wg. dropdown-domain - > wird jetzt standardmäßig 1 gesetzt...
-				if (attribut_name === 'fil'){	// brn kommt als string an - ich setze hwg trotzdem sicherheitshalber als int
+				if (attribut_name === 'fil'){	
 					if (zellen_wert == 0 ){
 						//console.log(typeof(zellen_wert) +": "+ zellen_wert)
-						console.log("habe  0 in fil. Erstelle fil null")
+						console.log("habe  0 in fil. Erstelle fil 1")
 						//console.log("fil ist vorher Datentyp: "+ typeof(zellenobjekt[zeilen_nr].fil))
 						zellenobjekt[zeilen_nr].fil = 1
 						//console.log(zellenobjekt[zeilen_nr].fil + "(" +typeof(zellenobjekt[zeilen_nr].fil)+ ")")
 					} 
-					else {
+					/*
+          else {
 						console.log("!!!!!!!!FIL hat unvorhergesehenen Wert: "+zellen_wert)
 					}
+          */
+				}
+        
+        if (attribut_name === 'lage'){	
+					if (zellen_wert == 0 ){
+						//console.log(typeof(zellen_wert) +": "+ zellen_wert)
+						console.log("habe  0 in lage Erstelle Lage null")
+						//console.log("lage ist vorher Datentyp: "+ typeof(zellenobjekt[zeilen_nr].lage))
+						zellenobjekt[zeilen_nr].lage = 1
+						//console.log(zellenobjekt[zeilen_nr].lage + "(" +typeof(zellenobjekt[zeilen_nr].lage)+ ")")
+					} 
 				}
 
 				//primär / sekundär WIRD JETZT IMMER AUF 'Primär' GESETZT
