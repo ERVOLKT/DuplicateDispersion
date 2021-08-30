@@ -211,7 +211,7 @@ function init() {
 		//...hatte zum Spalten-Einfügen funktioniert,
 		//	...allerdings nur für den Export über Papa.unparse(csv_tab), 
 		//	... war so im zellenobjekt nicht log-bar und schien deshalb nicht zu funktionieren
-		//	... jetzt wird ohinehin Papa.unparse(zellenobjekt) verwendet
+		//	... jetzt wird ohnehin Papa.unparse(zellenobjekt) verwendet
 		for (field in fehlende_spalten){	
 			//csv_tab.meta.fields.push('leistungsfaehigkeit');
 			console.log("Füge Attribut "+ fehlende_spalten[field] + " ein.")
@@ -353,7 +353,7 @@ function init() {
 					} 
 				}
 
-				//fil 0 ausschließen wg. dropdown-domain - > wird jetzt standardmäßig 1 gesetzt...
+				//fil 0 ausschließen wg. dropdown-domain - > wird, wenn 0/NULL, jetzt standardmäßig 1 gesetzt...
 				if (attribut_name === 'fil'){	
 					if (zellen_wert == 0 ){
 						//console.log(typeof(zellen_wert) +": "+ zellen_wert)
@@ -368,7 +368,7 @@ function init() {
 					}
           */
 				}
-        // Lage abfangen
+        // Lage abfangen -> wird bei 0/NULL und größergleich 5 auf 1 gesetzt
         if (attribut_name === 'lage'){	
 					if (zellen_wert == 0 ){//gilt auch für NULL
 						//console.log(typeof(zellen_wert) +": "+ zellen_wert)
@@ -385,7 +385,8 @@ function init() {
 						console.log("!!!!!!!!Lage hat unvorhergesehenen Wert: "+zellen_wert)
 					}
 				}
-        // leistungsfaehigkeit abfangen
+        
+        // leistungsfaehigkeit abfangen -> wird bei 0 / NULL und >6 auf 3 gesetzt
         if (attribut_name === 'leistungsfaehigkeit'){	
 					if (zellen_wert == 0 ){//gilt auch für NULL
 						//console.log(typeof(zellen_wert) +": "+ zellen_wert)
@@ -395,7 +396,7 @@ function init() {
 						//console.log(zellenobjekt[zeilen_nr].leistungsfaehigkeit + "(" +typeof(zellenobjekt[zeilen_nr].leistungsfaehigkeit)+ ")")
 					}
           else if (zellen_wert >= 6){
-            console.log("habe  5 oder größer in Lage Erstelle leistungsfaehigkeit 3")
+            console.log("habe  6 oder größer in Lage Erstelle leistungsfaehigkeit 3")
             zellenobjekt[zeilen_nr].leistungsfaehigkeit = 3
           }
           else {
@@ -403,7 +404,7 @@ function init() {
 					}
 				}
         
-        // bt abfangen
+        // bt abfangen -> wird bei 0/NULL auf 3 gesetzt, und bei >=8 auf 2
         if (attribut_name === 'bt'){	
 					if (zellen_wert == 0 ){//gilt auch für NULL
 						//console.log(typeof(zellen_wert) +": "+ zellen_wert)
@@ -412,8 +413,8 @@ function init() {
 						zellenobjekt[zeilen_nr].bt = 3
 						//console.log(zellenobjekt[zeilen_nr].bt + "(" +typeof(zellenobjekt[zeilen_nr].bt)+ ")")
 					}
-          else if (zellen_wert >= 6){
-            console.log("habe bt 6 oder größer in bt Erstelle bt 2")
+          else if (zellen_wert >= 8){
+            console.log("habe bt 7 oder größer in bt Erstelle bt 2")
             zellenobjekt[zeilen_nr].bt = 2
           }
           else {
@@ -421,12 +422,13 @@ function init() {
 					}
 				}
         
-				//primär / sekundär WIRD JETZT IMMER AUF 'Primär' GESETZT
+        
+				//primär / sekundär WIRD JETZT IMMER AUF 'Primär' GESETZT, weil Primärdaten
 				if (attribut_name === 'prim_sek'){	
 					zellenobjekt[zeilen_nr].prim_sek = 'primär'
 					//console.log("Spalte prim_sek  wurde auf '"+ zellenobjekt[zeilen_nr].prim_sek + "' gesetzt.")
 				} 
-				//Sekundärquelle WIRD JETZT IMMER AUF  'keine Sekundärdaten' GESETZT
+				//Sekundärquelle WIRD JETZT IMMER AUF  'keine Sekundärdaten' GESETZT, weil Primärdaten
 				if (attribut_name === 'quelle_sek'){	
 					zellenobjekt[zeilen_nr].quelle_sek = 'keine Sekundärdaten'
 					//console.log("Spalte quelle_sek war leer und wurde auf '"+ zellenobjekt[zeilen_nr].quelle_sek + "' gesetzt.")	
@@ -444,6 +446,28 @@ function init() {
 						zellenobjekt[zeilen_nr].leistungsfaehigkeit = 3
 						console.log("Spalte leistungsfaehigkeit war leer und wurde durch '"+ zellenobjekt[zeilen_nr].leistungsfaehigkeit + "' ersetzt.")
 					}
+				}
+        
+        //vollerheb_teilsort - > wird, wenn 0/NULL oder bei unsinnigem, jetzt standardmäßig auf Teilsortimente gesetzt...
+				if (attribut_name === 'vollerheb_teilsort'){	
+					if (zellen_wert == 0 ){
+						//console.log(typeof(zellen_wert) +": "+ zellen_wert)
+						console.log("habe  0 in vollerheb_teilsort. Erstelle vollerheb_teilsort 1")
+						//console.log("fil ist vorher Datentyp: "+ typeof(zellenobjekt[zeilen_nr].vollerheb_teilsort))
+						zellenobjekt[zeilen_nr].vollerheb_teilsort = 'Teilsortimente'
+						//console.log(zellenobjekt[zeilen_nr].vollerheb_teilsort + "(" +typeof(zellenobjekt[zeilen_nr].vollerheb_teilsort)+ ")")
+					}
+          else if (zellen_wert == 'Vollerhebung' ){
+            //gewünschter Wert; Nichts tun.
+						//console.log(typeof(zellen_wert) +": "+ zellen_wert)
+          }
+          else if (zellen_wert == 'Teilerhebung' ){
+						//gewünschter Wert; Nichts tun.
+            //console.log(typeof(zellen_wert) +": "+ zellen_wert)
+          }
+          else {
+						console.log("!!!!!!!!vollerheb_teilsort hat unvorhergesehenen Wert: "+zellen_wert)
+					}  
 				}
 
 				// INT-Garantie : Hausnummern, plz [...] und ReverseGeocoding-Feinjustierungsfeld als integer statt real oder string garantieren
