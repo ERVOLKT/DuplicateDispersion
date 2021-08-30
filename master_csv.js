@@ -334,11 +334,14 @@ function init() {
 						//console.log("habe "+zellen_wert+" in brn. Erstelle HWG 99")
 					}
 					else if (zellen_wert >= 100 && zellen_wert < 801 ){
-						zellenobjekt[zeilen_nr].hwg = null
-						//console.log("habe "+zellen_wert+" in brn. Erstelle HWG 99")
+						zellenobjekt[zeilen_nr].brn = 11
+            zellenobjekt[zeilen_nr].hwg = 10
+						console.log("habe "+zellen_wert+" in brn. Erstelle BRN 11 und HWG 10")
 					}
 					else {
-						console.log("!!!!!!!!BRN hat unvorhergesehenen Wert: "+zellen_wert)
+						console.log("!!!!!!!!BRN hat unvorhergesehenen Wert. Setze BRN 11 und HWG 10: "+zellen_wert)
+            zellenobjekt[zeilen_nr].brn = 11
+            zellenobjekt[zeilen_nr].hwg = 10
 					}
 				}
 
@@ -361,12 +364,20 @@ function init() {
 						//console.log("fil ist vorher Datentyp: "+ typeof(zellenobjekt[zeilen_nr].fil))
 						zellenobjekt[zeilen_nr].fil = 1
 						//console.log(zellenobjekt[zeilen_nr].fil + "(" +typeof(zellenobjekt[zeilen_nr].fil)+ ")")
-					} 
-					/*
-          else {
-						console.log("!!!!!!!!FIL hat unvorhergesehenen Wert: "+zellen_wert)
 					}
-          */
+          else if (zellen_wert == 1 ){
+            //gewünschter Wert; Nichts tun.
+						//console.log(typeof(zellen_wert) +": "+ zellen_wert)
+          }
+          else if (zellen_wert == 2 ){
+						//gewünschter Wert; Nichts tun.
+            //console.log(typeof(zellen_wert) +": "+ zellen_wert)
+          }
+          else {
+						console.log("!!!!!!!!FIL hat unvorhergesehenen Wert. Setze FIL=1: "+zellen_wert)
+            zellenobjekt[zeilen_nr].fil = 1
+					}
+          
 				}
         // Lage abfangen -> wird bei 0/NULL und größergleich 5 auf 1 gesetzt
         if (attribut_name === 'lage'){	
@@ -422,6 +433,41 @@ function init() {
 					}
 				}
         
+        if (attribut_name === 'analyseart'){	
+					if (zellen_wert == 0 ){//gilt auch für NULL
+						//console.log(typeof(zellen_wert) +": "+ zellen_wert)
+						console.log("habe analyseart 0 oder NULL in analyseart Erstelle analyseart  Erhebung")
+						//console.log("analyseart ist vorher Datentyp: "+ typeof(zellenobjekt[zeilen_nr].analyseart))
+						zellenobjekt[zeilen_nr].analyseart = 'Erhebung'
+						//console.log(zellenobjekt[zeilen_nr].analyseart + "(" +typeof(zellenobjekt[zeilen_nr].analyseart)+ ")")
+					}
+          else if (zellen_wert == 'AA'){
+            //console.log("erwünschter WErt. Nichts zu tun.")
+          }
+          else if (zellen_wert == 'Daten'){
+            //console.log("erwünschter WErt. Nichts zu tun.")
+          }
+          else if (zellen_wert == 'EHK'){
+            //console.log("erwünschter WErt. Nichts zu tun.")
+          }
+          else if (zellen_wert == 'Erhebung'){
+            //console.log("erwünschter WErt. Nichts zu tun.")
+          }
+          else if (zellen_wert == 'NVK'){
+            //console.log("erwünschter WErt. Nichts zu tun.")
+          }
+          else if (zellen_wert == 'REHK'){
+            //console.log("erwünschter WErt. Nichts zu tun.")
+          }
+          else if (zellen_wert == 'STA'){
+            //console.log("erwünschter WErt. Nichts zu tun.")
+          }
+          else {
+						console.log("!!!!!!!!analyseart hat unvorhergesehenen Wert. Setze Erhebung: "+zellen_wert)
+            zellenobjekt[zeilen_nr].analyseart = 'Erhebung'
+					}
+				}
+        
         
 				//primär / sekundär WIRD JETZT IMMER AUF 'Primär' GESETZT, weil Primärdaten
 				if (attribut_name === 'prim_sek'){	
@@ -452,10 +498,10 @@ function init() {
 				if (attribut_name === 'vollerheb_teilsort'){	
 					if (zellen_wert == 0 ){
 						//console.log(typeof(zellen_wert) +": "+ zellen_wert)
-						console.log("habe  0 in vollerheb_teilsort. Erstelle vollerheb_teilsort 1")
-						//console.log("fil ist vorher Datentyp: "+ typeof(zellenobjekt[zeilen_nr].vollerheb_teilsort))
+						console.log("habe  0 in vollerheb_teilsort. Erstelle Eintrag Teilsortimente")
+						console.log("vollerheb_teilsort ist vorher Datentyp: "+ typeof(zellenobjekt[zeilen_nr].vollerheb_teilsort))
 						zellenobjekt[zeilen_nr].vollerheb_teilsort = 'Teilsortimente'
-						//console.log(zellenobjekt[zeilen_nr].vollerheb_teilsort + "(" +typeof(zellenobjekt[zeilen_nr].vollerheb_teilsort)+ ")")
+						console.log(zellenobjekt[zeilen_nr].vollerheb_teilsort + "(" +typeof(zellenobjekt[zeilen_nr].vollerheb_teilsort)+ ")")
 					}
           else if (zellen_wert == 'Vollerhebung' ){
             //gewünschter Wert; Nichts tun.
@@ -467,6 +513,8 @@ function init() {
           }
           else {
 						console.log("!!!!!!!!vollerheb_teilsort hat unvorhergesehenen Wert: "+zellen_wert)
+            console.log("Setze  Teilsortimente als Wert")
+            zellenobjekt[zeilen_nr].vollerheb_teilsort = 'Teilsortimente'
 					}  
 				}
 
