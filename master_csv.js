@@ -272,7 +272,7 @@ function init() {
 						//console.log(typeof(zellen_wert) +": "+ zellen_wert)
 						console.log("habe 0 / NULL in brn. Erstelle BNR 10 und HWG 11")
 						//console.log("hwg ist vorher Datentyp: "+ typeof(zellenobjekt[zeilen_nr].hwg))
-						zellenobjekt[zeilen_nr].bnr = 11
+						zellenobjekt[zeilen_nr].brn = 11
             zellenobjekt[zeilen_nr].hwg = 10
 						//console.log(zellenobjekt[zeilen_nr].hwg + "(" +typeof(zellenobjekt[zeilen_nr].hwg)+ ")")
 					} 
@@ -280,7 +280,7 @@ function init() {
 						//console.log(typeof(zellen_wert) +": "+ zellen_wert)
 						console.log("habe EH 1-9 in brn. Erstelle BNR 10 und HWG 11")
 						//console.log("hwg ist vorher Datentyp: "+ typeof(zellenobjekt[zeilen_nr].hwg))
-						zellenobjekt[zeilen_nr].bnr = 11
+						zellenobjekt[zeilen_nr].brn = 11
             zellenobjekt[zeilen_nr].hwg = 10
 						//console.log(zellenobjekt[zeilen_nr].hwg + "(" +typeof(zellenobjekt[zeilen_nr].hwg)+ ")")
 					} 
