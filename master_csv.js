@@ -509,7 +509,7 @@ function init() {
             //gewünschter Wert; Nichts tun.
 						//console.log(typeof(zellen_wert) +": "+ zellen_wert)
           }
-          else if (zellen_wert == 'Teilerhebung' ){
+          else if (zellen_wert == 'Teilsortimente' ){
 						//gewünschter Wert; Nichts tun.
             //console.log(typeof(zellen_wert) +": "+ zellen_wert)
           }
