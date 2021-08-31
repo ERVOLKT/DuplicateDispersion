@@ -244,16 +244,23 @@ layerTree.prototype.addVectorLayer = function (form) {
         console.log(zoompoint)
 
 
-// Räumlicher Vergleich und Duplikat_Veränderung
+// Räumlicher Vergleich und Duplikat_Veränderung / Schlangengenerierung
+      
+        //FÜr jedes Feature die Koordinaten auslesen ...: x_value | y_value
         for (x in geojson_json.features){
+           // ...x-Werte...
            var x_value = geojson_json.features[x].geometry.coordinates[0][0]
+           // ... y-Werte...
            var y_value = geojson_json.features[x].geometry.coordinates[0][1]
-           x_values_array.push(x_value);    //zuerst ein X-Wert-Array zum X-Wert-Vergleich schaffen, und für Bounds
-           y_values_array.push(y_value);    // und y-Wert-Array, aber nur für Bounds
+       //... dann das X-Wert-Array zum X-Wert-Vergleich und für Bounds füllen ...
+           x_values_array.push(x_value);    
+       // ... und das y-Wert-Array füllen, aber nur für Bounds ...
+           y_values_array.push(y_value);    
         }
        
-
-//Math.max.apply(Math, array) !!!!!!!!!!!!!!!!!
+      
+    //... aus den Maximal- X - und Y-Werten den Extent / die Bounds basteln ...
+        //Syntax: Math.max.apply(Math, array) !!!!!!!!!!!!!!!!!
 
         max_x = Math.max.apply(Math,x_values_array) 
         console.log("max_x: "+max_x)               
@@ -266,17 +273,20 @@ layerTree.prototype.addVectorLayer = function (form) {
 
         extent = [min_x.toString(), min_y.toString(), max_x.toString(), max_y.toString()] // to String?
         console.log("Extent z270: "+extent)
+          //NUN MUSS MAN DEN EXTENT AUS DIESER FUNKTION HERAUSBRINGEN --> IM GLOBAL SCOPE ERREICHBAR
 
-        //NUN MUSS MAN DEN EXTENT AUS DIESER FUNKTION HERAUSBRINGEN, SODASS ER IM GLOBAL SCOPE LESBAR IST!!!!!!!!
-
-        
+        //... FÜr jedes Feature die Koordinaten neu auslesen ...: xx_value | yy_value ...
         for (xx in geojson_json.features){
             var xx_value = geojson_json.features[xx].geometry.coordinates[0][0]
             //console.log("xx_value: "+xx_value);
-
-            for (xxx in x_values_array){    //Vergleich der Features-x-Werte  mit in Array gepushten x-Werten
+            var yy_value = geojson_json.features[xx].geometry.coordinates[0][1]
+            //console.log("yy_value: "+yy_value);
+            
+            //Für jede4n Eintrag der ins Array gepushten x-Werte Vergleich mit  jew. Features-xx-Wert   
+            for (xxx in x_values_array){    
                 //console.log(xxx);
-                if (xx_value === x_values_array[xxx] ){         //Wenn x-Koordinate in features = x-Koordinate in x-Array....
+              //... Wenn x-Koordinate in features = x-Koordinate in x-Array....
+                if (xx_value === x_values_array[xxx] ){         
                     //console.log(xx + " vs "+xxx)
                     if (xx === xxx){                                                // Wenn die Position von x-Koordinate in features = Position von X-Koordinate in x-array
                                                                                     //Mache nichts...
@@ -305,7 +315,7 @@ layerTree.prototype.addVectorLayer = function (form) {
 
         var dispersion_history = [];
         
-        //x-Wert um 1 Meter verändern: 
+        //x-Wert um 1.75 Meter verändern: 
         for (xxxx in duplicate_array2){   // Leider wird der erste ortsgleiche Punkt auch verschoben... das sollte nicht passieren, weil er nur als xx und nciht xxx gespeichert wird (?)
             if (geojson_json.features[xxxx]){   // zur Sicherheit eingebaut, weil immer nach dem letzten Feature noch einmal angefangen wurde, 
                                                 //und das Feature-Array hatte an dieser Stelle ncihts mehr. "geojson_json.features[xxxx] is undefined"... evtl. mal debuggen!!!!!!!!!!!!!!
@@ -313,10 +323,10 @@ layerTree.prototype.addVectorLayer = function (form) {
                 //console.log("Name:"+geojson_json.features[xxxx].properties.name)
                 //console.log(geojson_json.features[xxxx].geometry.coordinates[0][0])   
                 
-                var dispersion = geojson_json.features[xxxx].geometry.coordinates[0][0] + 1.0
+                var dispersion = geojson_json.features[xxxx].geometry.coordinates[0][0] + 1.75
                 //console.log("1.new x-value for "+ xxxx+ ": "+ dispersion)
                 //Check:    
-                // Merke dir die Verschiebungs-X-Werte...wenn es schon einmal dieser neue Wert avisiert wurde, dann füge noch +1 hinzu
+                // Merke dir die Verschiebungs-X-Werte...wenn es schon einmal dieser neue Wert avisiert wurde, dann füge noch +2.5 hinzu
                 while (dispersion_history.includes(dispersion)){                         
                     //console.log("1a.value " +dispersion+ " already in dispersion-array")
                     dispersion = dispersion +2.5
@@ -334,7 +344,7 @@ layerTree.prototype.addVectorLayer = function (form) {
         //console.log(dispersion_history.toString())
         
 
-        //Neues Dummy-Feature am Anfang unterbringen
+        //Neues Dummy-Feature am Anfang unterbringen, damit auf jeden Fall alle benötigten Attribute dabei sind, auch wenn die Spalte im Ausgangs-Datensatz nicht gefüllt war und deshalb nicht vom Server exportiert wurde
         geojson_json.features.unshift(
         {"type":"Feature",
         "geometry":{"type":"MultiPoint","coordinates":[[1178606.24072,6010867.34820]]},
