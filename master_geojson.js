@@ -229,6 +229,11 @@ layerTree.prototype.addVectorLayer = function (form) {
 
         var duplicate_array1 = []
         var duplicate_array2 = []
+	//vorbereitend auf neue Verschiebung
+	var near_not_same_array = []
+	var abstand = 0.0
+	var duplicate_verschiebe_array1 = []
+	var duplicate_verschiebe_array2 = []
 
         //parse filereader-object-"text" --> js-object
         geojson_json = JSON.parse(vectorData)
@@ -263,58 +268,114 @@ layerTree.prototype.addVectorLayer = function (form) {
         //Syntax: Math.max.apply(Math, array) !!!!!!!!!!!!!!!!!
 
         max_x = Math.max.apply(Math,x_values_array) 
-        console.log("max_x: "+max_x)               
+        //console.log("max_x: "+max_x)               
         min_x = Math.min.apply(Math,x_values_array) 
-        console.log("min_x: "+min_x)
+        //console.log("min_x: "+min_x)
         max_y = Math.max.apply(Math,y_values_array) 
-        console.log("max_y: "+max_y)
+        //console.log("max_y: "+max_y)
         min_y = Math.min.apply(Math,y_values_array) 
-        console.log("min_y: "+min_y)
+        //console.log("min_y: "+min_y)
 
         extent = [min_x.toString(), min_y.toString(), max_x.toString(), max_y.toString()] // to String?
-        console.log("Extent z270: "+extent)
-          //NUN MUSS MAN DEN EXTENT AUS DIESER FUNKTION HERAUSBRINGEN --> IM GLOBAL SCOPE ERREICHBAR
-
+        //console.log("Extent z270: "+extent)
+        //NUN MUSS MAN DEN EXTENT AUS DIESER FUNKTION HERAUSBRINGEN --> IM GLOBAL SCOPE ERREICHBAR
+        
+        //------------------------------------------------------Äußere geojson-Schleife
         //... FÜr jedes Feature die Koordinaten neu auslesen ...: xx_value | yy_value ...
         for (xx in geojson_json.features){
             var xx_value = geojson_json.features[xx].geometry.coordinates[0][0]
             //console.log("xx_value: "+xx_value);
             var yy_value = geojson_json.features[xx].geometry.coordinates[0][1]
             //console.log("yy_value: "+yy_value);
-            
-            //Für jede4n Eintrag der ins Array gepushten x-Werte Vergleich mit  jew. Features-xx-Wert   
+ 
+            //--------------------------------Vergleichsschleife im Array
+            //Für jeden Eintrag der ins Array gepushten x-Werte Vergleich mit  jew. Features-xx-Wert   
             for (xxx in x_values_array){    
                 //console.log(xxx);
+              
+                // Korrekte Abstandsberechnung
+                //Math.sqrt((Math.pow(point.x-this.x,2))+(Math.pow(point.y-this.y,2)))
+                var abstand = Math.sqrt((Math.pow(xx_value-x_values_array[xxx],2))+(Math.pow(yy_value-y_values_array[xxx],2)))
+                //console.log(xx_value)
+                //console.log(x_values_array[xxx])
+                  
+                //console.log(yy_value)
+                //console.log(y_values_array[xxx])
+                //console.log("Abstand: " + abstand + " m.")
+              // --------------------------------------if passige X-Koordinatenwerte  
               //... Wenn x-Koordinate in features = x-Koordinate in x-Array....
-                if (xx_value === x_values_array[xxx] ){         
-                    //console.log(xx + " vs "+xxx)
-                    if (xx === xxx){                                                // Wenn die Position von x-Koordinate in features = Position von X-Koordinate in x-array
-                                                                                    //Mache nichts...
-                        //console.log("no duplicates, same position:"+ xx +" , "+xxx)
-                    } else {                                                        //Wenn die Position von x-Koordinate in features und X-Koordinate in x-array sich unterscheidet....
-                            var d2pos_in_d1 = duplicate_array1.indexOf(xxx)                         //... dann finde die Position vom xxx-Wert(!) in duplicate_array1
-                            //console.log("Gewünschte Kombi ist: XX-" +xx+" , XXX-"+xxx)                  
-                            //console.log("Gefundene Kombi an Pos. "+d2pos_in_d1+" von duplicate_array1 ist "+duplicate_array1[d2pos_in_d1]+ " , "+ duplicate_array2[d2pos_in_d1])       
-                            if (xx === duplicate_array2[d2pos_in_d1] && xxx === duplicate_array1[d2pos_in_d1]){                         //   .... wenn der xx-Wert(!) im duplicate_array2 an DIESER Stelle vorkommt
-                                //console.log("Koordinaten-Kombi ist in umgekehrter Reihenfolge schon vorhanden und wird nicht aufgenommen(Falsche Dupletten...")   //... tue nichts...    
-                            } else {
-                                duplicate_array1.push(xx)                                                                                       // ...ansonsten füge xx dem duplicate_array1 hinzu 
-                                duplicate_array2.push(xxx)                                                                                                               //...und xxx dem duplicate_array2
+                if (xx_value === x_values_array[xxx] ){       
+                    //console.log("Gleiche Koordinaten:  + "xx + " vs "+xxx)
+
+
+
+/* FUnktion um alle Stellen eines WErtes in einem Array zu kriegen : Bisher wird nur einer aufgenommen bei ["var d2pos_in_d1 = duplicate_array1.indexOf(xxx)"]
+function getAllIndexes(arr, val) {
+	var indexes = [], i;
+	for(i = 0; i < arr.length; i++)
+	if (arr[i] === val)
+              indexes.push(i);
+              return indexes;
+          }
+var d2pos_in_d1  = getAllIndexes(duplicate_array1, xxx);
+*/
+
+/*
+			
+var dispersion_y = verlaengerung1.y
+geojson_json.features[xxxx].geometry.coordinates[0][1] = dispersion_y;
+console.log("y nachher: " + geojson_json.features[xxxx].geometry.coordinates[0][1])
+var dispersion = verlaengerung1.x
+geojson_json.features[xxxx].geometry.coordinates[0][0] = dispersion;
+console.log("x nachher: " + geojson_json.features[xxxx].geometry.coordinates[0][0])
+*/
+
+		if (xx === xxx){
+			//console.log("no duplicates, same position:"+ xx +" , "+xxx)
+		} else {                      //--------------------- else / also nicht gleiche Position---------------                                                      
+                	var d2pos_in_d1 = duplicate_array1.indexOf(xxx)                        
+                        //console.log("Gewünschte Kombi ist: XX-" +xx+" , XXX-"+xxx)                  
+                        //console.log("Gefundene Kombi an Pos. "+d2pos_in_d1+" von duplicate_array1 ist "+duplicate_array1[d2pos_in_d1]+ " , "+ duplicate_array2[d2pos_in_d1])       
+                        if (xx === duplicate_array2[d2pos_in_d1] && xxx === duplicate_array1[d2pos_in_d1]){                         
+                                //console.log("Koordinaten-Kombi ist in umgekehrter Reihenfolge schon vorhanden und wird nicht aufgenommen(Falsche Dupletten...")      
+                        } else {
+                            duplicate_array1.push(xx)                                                                                       // ...ansonsten füge xx dem duplicate_array1 hinzu 
+                            duplicate_array2.push(xxx)                                                                                                               //...und xxx dem duplicate_array2
                                 
-                            }
+                        }
                         
                         //console.log(geojson_json.features[xx])
                         //console.log(geojson_json.features[xxx])
-                    }    
+                    } //----------------------Ende else / also nicht gleiche Position---------------    
+                }// ------------------------------ Ende if passige X-Koordinatenwerte ---------
+                
+                
+                // Abstand ab 4m, aber nicht die ohne Abstand
+                if(abstand > 0 && abstand < 4){
+                  console.log("Abstand: "+ abstand + " m.")
+                  console.log("Nahe Koordinaten: "+ xx + " vs "+xxx)
+                  // notiere hier die Kombination
+                  //console.log(duplicate_verschiebe_array1)
+                  duplicate_verschiebe_array1.push(xx)
+                  console.log("duplicate_verschiebe_array1: " +duplicate_verschiebe_array1)
+                  //console.log(duplicate_verschiebe_array2)
+                  duplicate_verschiebe_array2.push(xxx)
+                  console.log("duplicate_verschiebe_array2: " +duplicate_verschiebe_array2)
                 }
-            }
-        }
+                else {
+                  // nichts tun
+                }
+              
+              
+            }// ----------------------------------------Ende Vergleichsschleife im Array-----------
+        }//---------------------------------- -----------------Ende äußere Geojson-Schleife------------
         //endgültige Dupletten-kombi-Array
         //console.log(duplicate_array1);
         //console.log(duplicate_array2);
 
         var dispersion_history = [];
         
+        //--------------------------Raumkorrektur-Schleife für gleiche:
         //x-Wert um 1.75 Meter verändern: 
         for (xxxx in duplicate_array2){   // Leider wird der erste ortsgleiche Punkt auch verschoben... das sollte nicht passieren, weil er nur als xx und nciht xxx gespeichert wird (?)
             if (geojson_json.features[xxxx]){   // zur Sicherheit eingebaut, weil immer nach dem letzten Feature noch einmal angefangen wurde, 
@@ -340,9 +401,40 @@ layerTree.prototype.addVectorLayer = function (form) {
                 //console.log(geojson_json.features)
             }
         
-        }//-----------------Ende Raumkorrektur-Schleife
+        }//-----------------Ende Raumkorrektur-Schleife (gleiche)
         //console.log(dispersion_history.toString())
+      
+        // ------------------Anfang 2. Raumkorrektur-Schleife (nicht gleiche)
         
+        // Verschiebefunktion entlang einer Linie um den insg.doppelten Abstand (percentage 2) udn Verschiebung
+        function getPositionAlongTheLine(x1, y1, x2, y2, percentage) {
+          return {x : x1 * (1.0 - percentage) + x2 * percentage, y : y1 * (1.0 - percentage) + y2 * percentage};
+			  }
+
+        
+        for (xxxxx in duplicate_verschiebe_array1){
+          console.log("x1 ist "+ geojson_json.features[duplicate_verschiebe_array1[xxxxx]].geometry.coordinates[0][0])
+          console.log("y1 ist "+ geojson_json.features[duplicate_verschiebe_array1[xxxxx]].geometry.coordinates[0][1])
+          console.log("x2 ist "+ geojson_json.features[duplicate_verschiebe_array2[xxxxx]].geometry.coordinates[0][0])
+          console.log("y2 ist "+ geojson_json.features[duplicate_verschiebe_array2[xxxxx]].geometry.coordinates[0][1])
+          
+          // Verlängerung1 in Richtung 2 über Punkt 2 hinaus: also muss x2 verlaengerung1.x und y2 verlaengerung1.y erhalten
+          var verlaengerung1 = getPositionAlongTheLine(   geojson_json.features[duplicate_verschiebe_array1[xxxxx]].geometry.coordinates[0][0], geojson_json.features[duplicate_verschiebe_array1[xxxxx]].geometry.coordinates[0][1], geojson_json.features[duplicate_verschiebe_array2[xxxxx]].geometry.coordinates[0][0], geojson_json.features[duplicate_verschiebe_array2[xxxxx]].geometry.coordinates[0][1], 
+           1.5);
+          console.log("Verlängerung in Richtung 2 über Punkt 2 hinaus:" + verlaengerung1.x, verlaengerung1.y);
+          
+          // Verlängerung2 in Richtung 1 über Punkt 1 hinaus: also muss x1 verlaengerung2.x und y1 verlaengerung2.y erhalten
+          var verlaengerung2 = getPositionAlongTheLine(   geojson_json.features[duplicate_verschiebe_array2[xxxxx]].geometry.coordinates[0][0], geojson_json.features[duplicate_verschiebe_array2[xxxxx]].geometry.coordinates[0][1], 
+geojson_json.features[duplicate_verschiebe_array1[xxxxx]].geometry.coordinates[0][0], geojson_json.features[duplicate_verschiebe_array1[xxxxx]].geometry.coordinates[0][1],                                                 
+           1.5);
+			    console.log("Verlängerung in Richtung 1 über Punkt 1 hinaus:" + verlaengerung2.x, verlaengerung2.y);
+          
+          // x2 -> verlaengerung1.x etc.
+          geojson_json.features[duplicate_verschiebe_array2[xxxxx]].geometry.coordinates[0][0] =  verlaengerung1.x;
+          geojson_json.features[duplicate_verschiebe_array2[xxxxx]].geometry.coordinates[0][1] =  verlaengerung1.y;
+          geojson_json.features[duplicate_verschiebe_array1[xxxxx]].geometry.coordinates[0][0] =  verlaengerung2.x;
+          geojson_json.features[duplicate_verschiebe_array1[xxxxx]].geometry.coordinates[0][1] =  verlaengerung2.y;
+        }
 
         //Neues Dummy-Feature am Anfang unterbringen, damit auf jeden Fall alle benötigten Attribute dabei sind, auch wenn die Spalte im Ausgangs-Datensatz nicht gefüllt war und deshalb nicht vom Server exportiert wurde
         geojson_json.features.unshift(
