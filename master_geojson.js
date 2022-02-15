@@ -245,22 +245,7 @@ layerTree.prototype.addVectorLayer = function (form) {
         zoompoint = geojson_json.features[0].geometry.coordinates;
         console.log(zoompoint)
 
-// --- Hier neue Turf-Fus einbauen-----------
-
-// Probleme beim schwaebisch-hall-datensatz und beim centro....:
-// .. es bricht hier beim letzten cluster-Feature ab .. dann kommt ein turf-Fehler...
-
-/*
-Uncaught TypeError: can't assign to property 0 on 6.880123868176042: not an object
- In Strict_mode, a TypeError is raised when attempting to create a property on primitive value such as a symbol, a string, a number or a boolean. Primitive values cannot hold any property.
-The problem might be that an unexpected value is flowing at an unexpected place, or that an object variant of a String or a Number is expected. 
-*/
-// ??? gehen auch andere Attribute?
-// 2er-CLuster werden noch nicht erkannt!!!!!! 
-// NEIN geht es auch anderswo?
-// OK- kommt false_dummy dazu?
-// OK- ist der crs-Tag dabei
-//OK, geht schon mit dem HN_singled_raw.geojson - Datensatz
+// --- Hier neue Turf-Funktionen -----------
 
 
     //console.log(geojson_json);
@@ -269,8 +254,8 @@ The problem might be that an unexpected value is flowing at an unexpected place,
     var converted = turf.toWgs84(geojson_json);
     console.log(converted)
 
-    //2m-NÄhe-Cluster erkennen
-    var scanned = turf.clustersDbscan(converted,0.002)
+    //2-METER-NÄHE-CLUSTER ERKENNEN
+    var scanned = turf.clustersDbscan(converted,0.002) 
     /*console.log("Scan-Ergebnis:" +scanned)
     for (x in scanned){
       console.log(x + ": " + scanned[x])
@@ -297,13 +282,13 @@ The problem might be that an unexpected value is flowing at an unexpected place,
       cluster_center_coords = cluster_center.geometry.coordinates
       console.log("cluster-center-Koordinaten: " + cluster_center_coords)
 
-      // Gradzahl für die Bearings des clusters erstellen: 
-      console.log("GRadzahl ist:" + 360/cluster.features.length + ". Also werden in folgenden Winkeln Punkte projeziert:")
+      // GRADZAHL für die Bearings des clusters erstellen: 
+      console.log("GRadzahl ist:" + 360/cluster.features.length + ". Also wird in folgenden Winkeln Punkte projeziert:")
       for (let ii = 0; ii < cluster.features.length; ii++){
         var gradzahl = ii*(360/cluster.features.length)
         console.log("Gradzahl: "+ gradzahl)
         console.log("... für Feature-Stelle: "+ii)
-        //ABstand (ideeller Kreisradius) >= 4,25 Meter 
+        //ABSTAND DES IDEELLEN KREISRADIUS >= 4,25 METER - FÜR JEDES WEITERE FEATURE IM CLUSTER WÄCHST DURCHMESSER + 1/8 METER
         var diameter = 4 + (cluster.features.length*0.125)
 
         var translated_coords_point = turf.transformTranslate(turf.point(cluster_center_coords), diameter, gradzahl,{units: 'meters'});
@@ -329,107 +314,18 @@ The problem might be that an unexpected value is flowing at an unexpected place,
       //console.log(center)
       center_array.push(center)
       console.log("Hallo330")
-      /*center_puffer = turf.buffer(center, 15, {
-        units: 'meters',
-        //Ecken-Anzahl wächst nach Cluster-Größe
-        // jetzt noch die Punkte darauf verteilen
-        steps: cluster.features.length 
-      });*/
-      //console.log("es sind "+ cluster.features.length + " Steps.")
-      
-      //center_puffer_array.push(center_puffer)
-      /*center_puffer_line = turf.polygonToLine(center_puffer)
-      center_puffer_lines_array.push(center_puffer_line)
-      center_puffer_line_length = turf.length(center_puffer_line, {units: 'meters'});
-      center_puffer_line_lengths_array.push(center_puffer_line_length)
-      center_puffer_line_length_ratio = center_puffer_line_length / (cluster.features.length + 1)
-      center_puffer_line_length_ratios_array.push(center_puffer_line_length_ratio)*/
+ 
 
-      // multipoint erstellen
-      /*
-      center_puffer_line_projectpoints_gesamt_array.push(center_puffer_line_projectpoints_sammel_array)
-      console.log(turf.getType(turf.multiPoint(center_puffer_line_projectpoints_sammel_array)))
+    }) // ----------------------------------- Ende turf.clusterEach
 
-      //wichtig:wieder löschen
-      center_puffer_line_projectpoints_sammel_array = []
-      */
-      // FALLS es mit den Punkten auf dem Puffer nix wird (vl. einfach die vorhandenen Punkte ersetzen?):
-      //RIchtungen für die zu projezierenden Punkte festlegen und als Punkte darstellen (und/pder auch nur die vorh. Punkte ersetzen?)
-
- /*     console.log("GRadzahl ist:" + 360/cluster.features.length + ". Also werden in folgenden Winkeln Punkte projeziert:")
-      for (let ii = 0; ii < cluster.features.length; ii++){
-        console.log(ii*(360/cluster.features.length))
-
-      }*/
-      // SO MIT DEN RICHTUNGEN MÜSSEN JETZT DIE ORIGINAL-PUNKTE AUS DEM CLUSTER ++VERSCHOBEN WERDEN ...
-      // also Punkte ansprechen...(s.o.)
-      // und Koordinaten austauschen, entweder durch along(buffer(centroid(cluster))) oder durch translatedPoint(feature), s.u.
-      /*var translatedPoint = turf.transformTranslate(
-        point, 
-        5,  //distance
-        35,   //direction
-        {
-          units:'meters',
-        }
-      );*/
-      // ... und in ORiginal verändern....
-
-      //-------------------------------------
-      // pro cluster 1 puffer erstellen .. leider wird pro cluster-PUNKT ein puffer erstellt???!!! Das sollte nicht so sein... allerdings bleiben dann die props auf der Strecke
-
-      //wahrscheinlich muss man das cluster aber wahrscheinlich 
-      // erstmal in single-points kriegen...statt Multi
-      // hat vielleicht nicht geholfen, aber dafür war das Wegnehmen der Properties in qgis wohl erfolgreich...[dafür musste man aber zunächst das var hn_zentrum =  vorher wegnehmen]... oder doch nicht?
-      /*var hull = turf.concave(cluster);
-      console.log(hull)
-      hull_array.push(hull)*/
-      //collection = turf.featureCollection(hull)
-      //console.log(collection)
-
-      /*
-      var points = turf.featureCollection([
-      turf.point([-63.601226, 44.642643]),
-      turf.point([-63.591442, 44.651436]),
-      turf.point([-63.580799, 44.648749]),
-      turf.point([-63.573589, 44.641788]),
-      turf.point([-63.587665, 44.64533]),
-      turf.point([-63.595218, 44.64765])
-    ]);
-    */
-
-      //clustergroesse
-      //cluster.features.length
-      /*puffer = turf.buffer(cluster, 5, {
-        units: 'meters',
-        steps: cluster.features.length
-      });
-      clusterbuffer_array.push(puffer)*/
-      
-      /*for (x in clusterbuffer_array[0].features.properties){
-        console.log(x)
-      }*/
-
-    })
-
-    // und jetzt  converted wieder zurück transformieren:
+    // und jetzt  converted wieder zurück transformieren...
     // (Ansicht bleibt aber aber auf converted)
-    console.log("Hallo415")
     console.log(converted);
-    console.log("Hallo417")
 
-    //var reverted = turf.toMercator(converted);
-    //    console.log(reverted)
 
-// HIER IST DER FEHLER!!!
-// AM MULTI/SINGLE LIEGT ES WAHRSCHEINLICH GAR NICHT?
-//-> ALS wgs84 ausspielen versuchen, auch ohne das dummy-feature
-// -> also converted ausspielen...
-// daran liegt es auch nicht...
-//...eigentlich geht es NUR bei HN_singled_raw richtig...
     try{
         
-        
-        //EIN Problem ist dass die Koordinaten in der Grundform im Doppel-Array vorliegen, 
+        //Ein Problem ist dass die Koordinaten in der Grundform im Doppel-Array vorliegen, 
         // Aber bei den neuberechneten Koords als einfaches Array... Ich bringe alles auf Doppel-Array-FOrm
         for (var f = 0; f < converted.features.length; f += 1) {
             //wenn im Koordinaten-Array ein Array vorliegt ...
@@ -458,13 +354,6 @@ The problem might be that an unexpected value is flowing at an unexpected place,
                 
 
             }
-            
-            //Punkte einzeln in 3857 rückführen:
-            //point_xy = turf.toMercator(point_xy)
-            
-            
-        //.. UND WIEDER SIND DIE UMGEWANDELTEN PUNKTE DER CLUSTER NUR IN EINEM ARRAY,
-        //.. WIR BRAUCHEN ABER DOPPEL-ARRAY FÜR ALLE MULTI-PUNKTE...
         }
     }
     catch(err){
@@ -472,60 +361,12 @@ The problem might be that an unexpected value is flowing at an unexpected place,
         console.log(err.message)
     }
 
-    //var reverted = turf.toMercator(converted);
-    //console.log(reverted)
-    // das Ausspielen als geojson kommt dann im OL-Code, dort gibt es die FUnktion eh schon...:
-    console.log("Hallo428")
-
-    //was wurde in die arrays  gepusht:
-   // console.log("HIer center-array:" + center_array)
-    //console.log(center_puffer_array)
-    /*console.log(center_puffer_lines_array)
-    console.log(center_puffer_line_lengths_array)
-    console.log(center_puffer_line_length_ratios_array)*/
-    //bisheriger Endstand, wird nicht gescheit zum Layer:
-/* ES MUSS AB ALONG NOCH EINMAL DIE INTERNE STRUKTUR GEPRÜFT WERDEN IN DER DIE FEATURE COLLECTION BIS HIER UNTEN AUFGEBAUT IST. 
-Derzeitige Verschachtelung: 
-{ FeatureCollection,
-  FEatures 
-  [
-    [!!!! hier kommen sub-arrays mit Packeten zu 6 punkten, 43 Punkten etc. Aber die STruktur der Doppel-Verschachtelung bezieht sich bei Multipoint nur auf die Koordinaten. HIER MUSS KLARHEIT HER!
-    {type feature,
-     geometry:
-      {
-        type:point,
-        coordinates:[
-          x,y
-        ]
-      }
-    },
-    {type feature,
-     geometry:
-      {
-        type:point,
-        coordinates:[
-          x,y
-        ]
-      }
-    },
-    ......
-
-
-
-
-
-*/
-    //console.log(center_puffer_line_projectpoints_gesamt_array)
-
-    //daraus kann man einige zum Layer machen:
-    //center_layer = turf.featureCollection(center_array)
-    //center_puffer_layer = turf.featureCollection(center_puffer_array)
+ 
 
 
         
 //------------------------------------
 
-        console.log("Hallo524")
         //Neues Dummy-Feature am Anfang unterbringen, damit auf jeden Fall alle benötigten Attribute dabei sind, auch wenn die Spalte im Ausgangs-Datensatz nicht gefüllt war und deshalb nicht vom Server exportiert wurde
         // jetzt doch wieder mit converted statt reverted arbeiten,
         //... da die Koordinaten einzeln 
@@ -619,22 +460,7 @@ Derzeitige Verschachtelung:
         console.log("Hallo 615")
         //explicitly determine geojson format
         var sourceFormat = new ol.format.GeoJSON();
-        /*switch (form.format.value) {
-            case 'geojson':
-                sourceFormat = new ol.format.GeoJSON();
-                break;
-            case 'topojson':
-                sourceFormat = new ol.format.TopoJSON();
-                break;
-            case 'kml':
-                sourceFormat = new ol.format.KML();
-                break;
-            case 'osm':
-                sourceFormat = new ol.format.OSMXML();
-                break;
-            default:
-                return false;
-        }*/
+
         //explicitly determine only web mercator 
         var dataProjection = 'EPSG:3857'    //form.projection.value' || sourceFormat.readProjection(vectorData) || currentProj;
        console.log("Hallo636") 
@@ -681,19 +507,6 @@ Derzeitige Verschachtelung:
 
 
 // Fu. muss auch innerhalb vom fr.onload stehen und  geojson_text oben definiert sein
-/*function download(filename, txt) {
-    //console.log("3-Innerhalb download-fu: text-variable(ausgeojson_export übernommen) is now:" +txt);                
-    var element = document.createElement('a');
-    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(txt));
-    element.setAttribute('download', filename);
-
-    element.style.display = 'none';
-    document.body.appendChild(element);
-
-    element.click();
-
-    document.body.removeChild(element);
-}*/
 
 function save_as(content, fname){
     var blob = new Blob([content], {
@@ -714,22 +527,7 @@ function init() {
                 source: new ol.source.OSM(),
                 name: 'BaseLayer: OpenStreetMap'
             })
-            /*,
-            new ol.layer.Vector({
-                source: new ol.source.Vector({
-                    format: new ol.format.GeoJSON({
-                        defaultDataProjection: 'EPSG:4326'
-                    }),
-                    url: '../../res/world_capitals.geojson',
-                    attributions: [
-                        new ol.Attribution({
-                            html: 'World Capitals © Natural Earth'
-                        })
-                    ]
-                }),
-                name: 'World Capitals'
-            })*/
-            ],
+              ],
         controls: [
             //Define the default controls
             new ol.control.Zoom({
