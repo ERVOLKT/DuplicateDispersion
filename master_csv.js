@@ -21,9 +21,9 @@ function init() {
     var map = new ol.Map({
 	    target: 'map',
 	    layers: [
-	        new ol.layer.Tile({source: new ol.source.Stamen({layer: 'terrain'})})
-	        /*new ol.layer.Tile({source: new ol.source.OSM()})
-	        ,vectorLayer*/
+	        //new ol.layer.Tile({source: new ol.source.Stamen({layer: 'terrain'})})
+	        new ol.layer.Tile({source: new ol.source.OSM()})
+	        //,vectorLayer
 	    ],
 	    controls: [
 	        //Define the default controls
